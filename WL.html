@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekend League Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="WL.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c49b3a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fifa Legends">
+</head>
+<body>
+<div class="wrap">
+
+  <a href="Fifa.html" class="back-link">← Voltar</a>
+
+  <header>
+    <div class="eyebrow">Fifa Legends &middot; Competitivo</div>
+    <h1>WEEKEND <span>LEAGUE</span></h1>
+    <div class="sub">Crie, monte o time e registre as partidas da semana</div>
+  </header>
+
+  <div class="stats-link-wrap" style="gap:12px;">
+    <a href="WLStats.html" class="add-btn-wl" style="text-decoration:none; display:inline-block;">📊 Estatísticas dos Jogadores</a>
+    <a href="WLHistorico.html" class="add-btn-wl" style="text-decoration:none; display:inline-block;">📼 Histórico de WLs</a>
+  </div>
+
+  <section class="panel">
+    <h2>🏆 Suas Weekend Leagues</h2>
+    <div class="wl-selector">
+      <select id="wlSelect"></select>
+      <button type="button" id="newWLBtn" class="add-btn-wl">+ Nova WL</button>
+      <button type="button" id="renameWLBtn" class="add-btn-wl">✏️ Renomear</button>
+      <button type="button" id="deleteWLBtn" class="del-wl-btn">🗑 Apagar esta WL</button>
+    </div>
+    <div class="hint" style="margin-top:14px;">Trocou de navegador ou de computador? Exporte o backup aqui e importe no outro lugar — é um arquivo só com todas as suas WLs.</div>
+    <div class="wl-selector" style="margin-top:8px;">
+      <button type="button" id="exportWLBtn" class="add-btn-wl">⬇ Exportar backup</button>
+      <button type="button" id="importWLBtn" class="add-btn-wl">⬆ Importar backup</button>
+      <input type="file" id="importWLFile" accept="application/json" style="display:none;">
+    </div>
+  </section>
+
+  <div id="wlContent" style="display:none;">
+
+    <datalist id="allPlayerNamesList"></datalist>
+
+    <section class="panel">
+      <h2>👥 Montar time desta WL</h2>
+      <div class="hint">Uma nova WL herda o time anterior se for da mesma edição. Escolha edição e formação pra ajustar quem entra em cada posição.</div>
+      <div class="formation-setup">
+        <div class="field">
+          <label for="squadBuildEdition">Edição</label>
+          <select id="squadBuildEdition">
+            <option value="">Selecione...</option>
+            <option value="fifa22">FIFA 22</option>
+            <option value="fifa23">FIFA 23</option>
+            <option value="fc26">EA FC 26</option>
+            <option value="fc27">EA FC 27</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="squadBuildFormation">Formação</label>
+          <select id="squadBuildFormation">
+            <option value="433-4">4-3-3 (4)</option>
+            <option value="41212-2">4-1-2-1-2 (2)</option>
+            <option value="442">4-4-2</option>
+          </select>
+        </div>
+        <button type="button" id="buildFormationBtn" class="add-btn-wl">Montar formação</button>
+      </div>
+      <div id="formationRows" class="formation-rows"></div>
+      <button type="button" id="saveSquadBtn" class="add-btn-wl" style="display:none; margin-top:14px;">💾 Salvar time</button>
+      <div class="error-msg" id="squadErrorMsg"></div>
+
+      <div class="squad-header-row">
+        <div class="hint" style="margin:0;">Time atual desta WL (clique no × pra remover um jogador específico):</div>
+        <button type="button" id="clearSquadBtn" class="del-wl-btn">🗑 Limpar time todo</button>
+      </div>
+      <div class="squad-chips" id="squadChips"></div>
+
+      <details class="single-add-details">
+        <summary>+ Adicionar 1 jogador avulso</summary>
+        <form id="squadForm">
+          <div class="field">
+            <label for="squadPlayerName">Nome do jogador</label>
+            <input type="text" id="squadPlayerName" list="allPlayerNamesList" placeholder="Nome do jogador" autocomplete="off">
+          </div>
+          <button type="submit" class="add-btn-wl">+ Adicionar ao time</button>
+        </form>
+      </details>
+    </section>
+
+    <section class="panel">
+      <h2>
+        ⚔️ Registrar partida <span id="progressText"></span>
+        <button type="button" id="openSubBtn" class="sub-btn-wl">🔄 Substituição</button>
+        <button type="button" id="openBenchBtn" class="bench-btn-wl">🪑 Banco</button>
+      </h2>
+      <div class="hint">Preencha o placar e os números de cada jogador. Deixe os 3 campos vazios pra quem não jogou. Use Enter pra pular de campo em campo.</div>
+      <form id="matchForm">
+        <div class="match-basics">
+          <div class="field">
+            <label for="golsFeitos">Gols feitos</label>
+            <input type="number" id="golsFeitos" min="0" placeholder="0" required>
+          </div>
+          <div class="field">
+            <label for="golsSofridos">Gols sofridos</label>
+            <input type="number" id="golsSofridos" min="0" placeholder="0" required>
+          </div>
+        </div>
+
+        <div class="squad-stats-table" id="squadStatsTable"></div>
+
+        <button type="submit" class="add-btn-wl">💾 Salvar partida</button>
+        <div class="error-msg" id="matchErrorMsg"></div>
+      </form>
+    </section>
+
+    <section class="table-shell">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Resultado</th>
+              <th>Placar</th>
+              <th>Média de nota</th>
+              <th>⭐ MVP</th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="matchesTbody">
+            <tr class="empty-row"><td colspan="8">Nenhuma partida registrada ainda.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>📊 Resumo desta WL</h2>
+      <div class="summary-grid" id="summaryGrid"></div>
+    </section>
+
+        <section class="panel">
+      <h2>🏆 Prêmios da WL</h2>
+      <div class="summary-grid" id="wlAwardsGrid"></div>
+    </section>                  
+
+        <section class="panel">
+      <h2>📋 Estatísticas do Time</h2>
+      <div class="table-shell">
+        <div class="table-scroll">
+          <table>
+            <thead id="statsTableHead"></thead>
+            <tbody id="statsTbody">
+              <tr class="empty-row"><td colspan="8">Sem dados ainda.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="newWLModalOverlay" style="display:none;">
+  <div class="modal-panel">
+    <h3>Nova Weekend League</h3>
+    <div class="modal-field">
+      <label for="newWLName">Nome da WL</label>
+      <input type="text" id="newWLName" placeholder="Ex: WL 20/09" autocomplete="off">
+    </div>
+    <div class="modal-field">
+      <label for="newWLEdition">Edição</label>
+      <select id="newWLEdition">
+        <option value="fifa22">FIFA 22</option>
+        <option value="fifa23">FIFA 23</option>
+        <option value="fc26">EA FC 26</option>
+        <option value="fc27">EA FC 27</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="newWLCancelBtn" class="cancel-btn-wl">Cancelar</button>
+      <button type="button" id="newWLConfirmBtn" class="add-btn-wl">Criar WL</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="renameWLModalOverlay" style="display:none;">
+  <div class="modal-panel">
+    <h3>Renomear Weekend League</h3>
+    <div class="modal-field">
+      <label for="renameWLInput">Novo nome</label>
+      <input type="text" id="renameWLInput" placeholder="Ex: WL 20/09" autocomplete="off">
+    </div>
+    <div class="hint" style="margin:0 0 4px;">Dica: mantenha algo como "FC27" ou "FIFA 23" no nome — as estatísticas usam isso pra identificar a edição da WL.</div>
+    <div class="modal-actions">
+      <button type="button" id="renameWLCancelBtn" class="cancel-btn-wl">Cancelar</button>
+      <button type="button" id="renameWLConfirmBtn" class="add-btn-wl">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="squadModalOverlay" style="display:none;">
+  <div class="modal-panel">
+    <h3 id="squadModalTitle">Registrar carta</h3>
+    <div class="modal-field">
+      <label for="squadModalEdition">Edição</label>
+      <select id="squadModalEdition">
+        <option value="">Selecione...</option>
+        <option value="fifa22">FIFA 22</option>
+        <option value="fifa23">FIFA 23</option>
+        <option value="fc26">EA FC 26</option>
+        <option value="fc27">EA FC 27</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label for="squadModalEvent">Evento / Raridade</label>
+      <input type="text" id="squadModalEvent" list="squadEventList" placeholder="Ex: Ouro, TOTY..." autocomplete="off">
+      <datalist id="squadEventList"></datalist>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="squadModalCancelBtn" class="cancel-btn-wl">Cancelar</button>
+      <button type="button" id="squadModalConfirmBtn" class="add-btn-wl">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="editPlayerModalOverlay" style="display:none;">
+  <div class="modal-panel">
+    <h3>Editar jogador</h3>
+    <div class="hint" style="margin:0 0 4px;">Corrige o nome/carta em todo o histórico desta WL. Se o nome bater com outro jogador já existente, as estatísticas se juntam automaticamente.</div>
+    <div class="modal-field">
+      <label for="editPlayerName">Nome</label>
+      <input type="text" id="editPlayerName" list="allPlayerNamesList" placeholder="Nome do jogador" autocomplete="off">
+    </div>
+    <div class="modal-field">
+      <label for="editPlayerEdition">Edição</label>
+      <select id="editPlayerEdition">
+        <option value="fifa22">FIFA 22</option>
+        <option value="fifa23">FIFA 23</option>
+        <option value="fc26">EA FC 26</option>
+        <option value="fc27">EA FC 27</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label for="editPlayerEvent">Evento / Raridade</label>
+      <input type="text" id="editPlayerEvent" list="editPlayerEventList" placeholder="Ex: Ouro, TOTY..." autocomplete="off">
+      <datalist id="editPlayerEventList"></datalist>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="editPlayerCancelBtn" class="cancel-btn-wl">Cancelar</button>
+      <button type="button" id="editPlayerConfirmBtn" class="add-btn-wl">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="subModalOverlay" style="display:none;">
+  <div class="modal-panel">
+    <h3>Substituição (permanente)</h3>
+    <div class="hint" style="margin-bottom:14px;">O avulso escolhido vira titular na posição de quem sair, a partir de agora.</div>
+    <div class="modal-field">
+      <label for="subOutSelect">Quem sai (titular)</label>
+      <select id="subOutSelect"></select>
+    </div>
+    <div class="modal-field">
+      <label for="subInSelect">Quem entra (avulso)</label>
+      <select id="subInSelect"></select>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="subCancelBtn" class="cancel-btn-wl">Cancelar</button>
+      <button type="button" id="subConfirmBtn" class="add-btn-wl">Confirmar troca</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="benchModalOverlay" style="display:none;">
+  <div class="modal-panel">
+    <h3>Banco de reservas — só para esta partida</h3>
+    <div class="hint" style="margin-bottom:14px;">Escolha jogadores avulsos para participar só do próximo registro de partida, sem virarem titulares.</div>
+    <div class="modal-field">
+      <label for="benchSelect">Adicionar do banco</label>
+      <select id="benchSelect"></select>
+      <button type="button" id="benchAddBtn" class="add-btn-wl" style="margin-top:8px; width:100%;">+ Trazer para esta partida</button>
+    </div>
+    <div class="bench-list" id="benchAddedList"></div>
+    <div class="modal-actions">
+      <button type="button" id="benchCloseBtn" class="cancel-btn-wl">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script src="WL.js"></script>
+<script src="pwa-register.js"></script>
+</body>
+</html>

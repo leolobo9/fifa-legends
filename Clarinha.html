@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarinha 💖🦄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="Clarinha.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c49b3a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fifa Legends">
+</head>
+<body>
+<canvas id="glitterCanvas"></canvas>
+
+<div class="content">
+  <a href="Fifa.html" class="back-home">← Voltar</a>
+
+  <div class="unicorn-hero">🦄</div>
+  <h1>Para a <span>Clarinha</span></h1>
+  <div class="rainbow-bar"></div>
+  <p class="subtitle">um cantinho mágico só seu ✨💖</p>
+
+  <div class="panel">
+    <h2>💖 Adicionar jogador favorito fofo da Clarinha</h2>
+    <div class="hint">Guarde aqui os jogadores mais fofos e queridinhos! ✨</div>
+    <form id="favForm">
+      <div class="field nome">
+        <label for="favNome">Nome do fofinho</label>
+        <input type="text" id="favNome" placeholder="Nome do jogador" maxlength="40" required>
+      </div>
+      <div class="field">
+        <label for="favPartidas">Partidas no MomoFC</label>
+        <input type="number" id="favPartidas" min="0" placeholder="0" required>
+      </div>
+      <div class="field">
+        <label for="favGols">Gols para a Momo</label>
+        <input type="number" id="favGols" min="0" placeholder="0" required>
+      </div>
+      <div class="field">
+        <label for="favAssist">Assistências</label>
+        <input type="number" id="favAssist" min="0" placeholder="0" required>
+      </div>
+      <button type="submit" class="add-btn-fofo">💗 Adicionar</button>
+      <div class="error-msg" id="favErrorMsg"></div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>🌈 Time dos fofinhos</h2>
+    <div class="table-scroll">
+      <table id="favTable">
+        <thead>
+          <tr>
+            <th>Fofinho</th>
+            <th>Partidas Pelo MomoFC</th>
+            <th>Gols para a Momo</th>
+            <th>Assistências</th>
+            <th>G+A</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="favTbody">
+          <tr class="empty-row"><td colspan="6">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sparkle-row">🌈 💫 🦄 💖 ✨</div>
+</div>
+
+<div class="cute-modal-overlay" id="cuteModalOverlay" style="display:none;">
+  <div class="cute-modal">
+    <div class="cute-modal-emoji">🦄💖</div>
+    <p id="cuteModalMessage"></p>
+    <button type="button" id="cuteModalClose" class="add-btn-fofo">Que fofo!</button>
+  </div>
+</div>
+
+<script src="Clarinha.js"></script>
+<script src="pwa-register.js"></script>
+</body>
+</html>

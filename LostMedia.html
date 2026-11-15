@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost Media — Arquivo Perdido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Special+Elite&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="LostMedia.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c49b3a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fifa Legends">
+</head>
+<body>
+<div class="scanlines"></div>
+<div class="noise"></div>
+
+<div class="wrap">
+
+  <a href="Fifa.html" class="back-link">← Voltar</a>
+
+  <header>
+    <div class="eyebrow">Arquivo &middot; Recuperação de Memória</div>
+    <h1 data-text="LOST MEDIA">LOST MEDIA</h1>
+    <div class="sub">Cartas perdidas, reconstruídas da memória &mdash; antes do hábito de fotografar</div>
+  </header>
+
+  <section class="panel">
+    <h2>📼 Registrar carta perdida</h2>
+    <div class="hint">G+A é calculado automaticamente. Ao confirmar, você escolhe edição, evento e posições dessa carta.</div>
+    <form id="lostForm">
+      <div class="field nome">
+        <label for="lostNome">Jogador</label>
+        <input type="text" id="lostNome" placeholder="Nome do jogador" maxlength="40" required>
+      </div>
+      <div class="field">
+        <label for="lostPartidas">Partidas (~)</label>
+        <input type="number" id="lostPartidas" min="0" placeholder="0" required>
+      </div>
+      <div class="field">
+        <label for="lostGols">Gols (~)</label>
+        <input type="number" id="lostGols" min="0" placeholder="0" required>
+      </div>
+      <div class="field">
+        <label for="lostAssist">Assistências (~)</label>
+        <input type="number" id="lostAssist" min="0" placeholder="0" required>
+      </div>
+      <button type="submit" class="add-btn-lost">📼 Registrar</button>
+      <div class="error-msg" id="lostErrorMsg"></div>
+    </form>
+  </section>
+
+  <div class="search-bar">
+    <input type="text" id="lostSearchInput" placeholder="Buscar jogador..." autocomplete="off">
+  </div>
+
+  <section class="table-shell">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Jogador</th>
+            <th>Edição</th>
+            <th>Evento</th>
+            <th>Posições</th>
+            <th>Partidas</th>
+            <th>Gols</th>
+            <th>Assist</th>
+            <th>G+A</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="lostTbody">
+          <tr class="empty-row"><td colspan="9">Carregando arquivo...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<div class="modal-overlay" id="lostModalOverlay" style="display:none;">
+  <div class="modal-panel">
+    <h3 id="lostModalTitle">Registrar carta perdida</h3>
+    <div class="modal-field">
+      <label for="lostModalEdition">Edição do jogo</label>
+           <select id="lostModalEdition">
+        <option value="">Selecione...</option>
+        <option value="fifa19">FIFA 19</option>
+        <option value="fifa20">FIFA 20</option>
+        <option value="fifa21">FIFA 21</option>
+        <option value="fifa22">FIFA 22</option>
+        <option value="fifa23">FIFA 23</option>
+        <option value="fc24">EA FC 24</option>
+        <option value="fc25">EA FC 25</option>
+        <option value="fc26">EA FC 26</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label for="lostModalEvent">Evento / Raridade</label>
+      <input type="text" id="lostModalEvent" list="lostEventList" placeholder="Ex: TOTY, Ouro..." autocomplete="off">
+      <datalist id="lostEventList"></datalist>
+    </div>
+    <div class="modal-field">
+      <label>Posições jogadas</label>
+      <div class="position-grid" id="lostModalPositions"></div>
+    </div>
+    <div class="modal-field">
+      <label for="lostModalNotes">Como você chegou nesse número? (opcional)</label>
+      <textarea id="lostModalNotes" rows="2" placeholder="Ex: joguei muito com ele no período do TOTY, comparando com o Ribéry da mesma época..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="lostModalCancelBtn" class="cancel-btn-lost">Cancelar</button>
+      <button type="button" id="lostModalConfirmBtn" class="add-btn-lost">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script src="LostMedia.js"></script>
+<script src="pwa-register.js"></script>
+</body>
+</html>

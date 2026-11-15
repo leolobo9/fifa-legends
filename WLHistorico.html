@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekend League — Histórico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="WL.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c49b3a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fifa Legends">
+</head>
+<body>
+<div class="wrap">
+
+  <a href="WL.html" class="back-link">← Voltar para WL</a>
+
+  <div class="stats-link-wrap">
+    <a href="WLStats.html" class="add-btn-wl" style="text-decoration:none; display:inline-block;">📊 Ver Estatísticas dos Jogadores</a>
+  </div>
+
+  <header>
+    <div class="eyebrow">Fifa Legends &middot; Competitivo</div>
+    <h1>HISTÓRICO <span>DE WLS</span></h1>
+    <div class="sub">Resumo geral e detalhes de cada Weekend League registrada</div>
+  </header>
+
+  <section class="panel">
+    <h2>🔍 Filtros</h2>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="historicoFilterEdition">Edição</label>
+        <select id="historicoFilterEdition">
+          <option value="">Todas as edições</option>
+          <option value="fifa22">FIFA 22</option>
+          <option value="fifa23">FIFA 23</option>
+          <option value="fc26">EA FC 26</option>
+          <option value="fc27">EA FC 27</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>📊 Resumo Geral</h2>
+    <div class="summary-grid" id="summaryGrid"></div>
+  </section>
+
+  <section class="panel">
+    <h2>📼 Ver uma WL específica</h2>
+    <select id="wlPickerSelect" style="width:100%; margin-bottom:14px;"></select>
+    <div id="wlPickerDetail"></div>
+  </section>
+
+</div>
+
+<script src="WLHistorico.js"></script>
+<script src="pwa-register.js"></script>
+</body>
+</html>

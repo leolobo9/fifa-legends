@@ -1,0 +1,284 @@
+.back-link{
+  display:inline-block;
+  margin-bottom:20px;
+  color:var(--gold);
+  text-decoration:none;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  border:1px solid var(--line);
+  padding:8px 14px;
+  border-radius:8px;
+  transition:border-color .12s, color .12s;
+}
+.back-link:hover{ border-color:var(--gold); color:var(--gold-light); }
+
+.chart-controls{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.chart-controls .field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.chart-controls .field label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.chart-controls .field select{
+  background:rgba(6,25,49,0.45);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:9px 12px;
+  color:var(--ink);
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  outline:none;
+}
+.chart-controls .field select:focus-visible{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(212,175,55,0.25);
+}
+
+.chart-wrap{
+  position:relative;
+  height:420px;
+  width:100%;
+}
+
+.rank-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.rank-table thead th{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:#241b04;
+  background:linear-gradient(180deg, var(--gold-light), var(--gold));
+  padding:10px;
+  text-align:center;
+}
+.rank-table thead th.rank-nome{ text-align:left; }
+.rank-table tbody td{
+  padding:9px 10px;
+  text-align:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;
+  border-bottom:1px solid rgba(212,175,55,0.12);
+}
+.rank-table tbody td.rank-nome{
+  text-align:left;
+  font-family:'Inter',sans-serif;
+  font-weight:600;
+  color:var(--ink);
+}
+.rank-table tbody tr:nth-child(1) td.rank-nome{ color:var(--gold-light); }
+.rank-table tbody tr:nth-child(2) td.rank-nome{ color:var(--silver); }
+.rank-table tbody tr:nth-child(3) td.rank-nome{ color:var(--bronze); }
+.rank-table tbody tr:hover{ background:rgba(212,175,55,0.06); }
+
+/* ---------- COMPARE CHART ---------- */
+.compare-controls{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.compare-controls select{
+  background:rgba(6,25,49,0.45);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:9px 12px;
+  color:var(--ink);
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  outline:none;
+  min-width:200px;
+}
+.compare-controls select:focus-visible{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(212,175,55,0.25);
+}
+
+.compare-chips{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+  min-height:20px;
+}
+
+.compare-chip{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border-radius:20px;
+  padding:6px 8px 6px 14px;
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  background:rgba(212,175,55,0.12);
+  border:1px solid var(--gold-deep);
+  color:var(--gold-light);
+}
+
+.compare-chip button{
+  background:transparent;
+  border:none;
+  color:#ffb3b3;
+  cursor:pointer;
+  font-size:15px;
+  line-height:1;
+  padding:2px 4px;
+}
+.compare-chip button:hover{ color:#ff5c5c; }
+
+#compareSearch{
+  background:rgba(6,25,49,0.45);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:9px 12px;
+  color:var(--ink);
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  outline:none;
+  min-width:180px;
+}
+#compareSearch::placeholder{ color:#8fa8d6; }
+#compareSearch:focus-visible{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(212,175,55,0.25);
+}
+
+/* ---------- TIMES IDEAIS ---------- */
+.ideal-teams-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:20px;
+}
+.ideal-team-card h3{
+  font-family:'Cinzel',serif;
+  color:var(--gold-light);
+  font-size:16px;
+  margin-bottom:10px;
+  text-align:center;
+}
+.pitch{
+  position:relative;
+  width:100%;
+  aspect-ratio:2/3;
+  background:linear-gradient(180deg,#1d7a4c,#155c3a);
+  border:2px solid rgba(255,255,255,0.4);
+  border-radius:10px;
+  overflow:hidden;
+}
+.pitch::before{
+  content:"";
+  position:absolute;
+  left:10%; right:10%; top:50%;
+  height:1px;
+  background:rgba(255,255,255,0.3);
+}
+.player-chip{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  background:rgba(212,175,55,0.92);
+  color:#241b04;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  font-weight:700;
+  padding:5px 8px;
+  border-radius:8px;
+  white-space:nowrap;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,0.4);
+  max-width:95px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.player-chip.empty{
+  background:rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.7);
+  font-style:italic;
+}
+
+.player-chip{ cursor:pointer; transition:transform .12s, box-shadow .12s; }
+.player-chip:hover{ transform:translate(-50%,-50%) scale(1.05); }
+.player-chip.selected{
+  outline:3px solid #fff;
+  box-shadow:0 0 0 4px rgba(255,255,255,0.4), 0 2px 8px rgba(0,0,0,0.4);
+  z-index:5;
+}
+
+.player-chip .chip-stat{
+  display:block;
+  font-size:9px;
+  color:#4a3600;
+  margin-top:2px;
+}
+
+.chart-controls .field select optgroup{
+  background:#0b2c52;
+  color:var(--gold-light);
+  font-style:normal;
+}
+.chart-controls .field select option{
+  background:#0b2c52;
+  color:var(--ink);
+}
+.team-tooltip{
+  position:fixed;
+  z-index:2000;
+  background:linear-gradient(160deg, rgba(11,44,82,0.98), rgba(20,74,134,0.98));
+  border:1px solid var(--gold);
+  border-radius:10px;
+  padding:12px 14px;
+  font-family:'Inter',sans-serif;
+  font-size:12.5px;
+  color:var(--ink);
+  box-shadow:0 12px 30px -10px rgba(0,0,0,0.6);
+  pointer-events:none;
+  max-width:230px;
+  display:none;
+}
+.team-tooltip strong{
+  color:var(--gold-light);
+  display:block;
+  margin-bottom:6px;
+  font-family:'Cinzel',serif;
+  font-size:13px;
+}
+.team-tooltip .tt-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;
+  color:var(--muted);
+  margin-top:2px;
+}
+.team-tooltip .tt-row span:last-child{ color:var(--gold-light); font-weight:700; }
+.team-tooltip .tt-swatch{ width:14px; height:14px; border-radius:4px; display:inline-block; margin-right:6px; vertical-align:middle; }
+.player-chip.empty .chip-stat{ color:rgba(255,255,255,0.5); }
+
+.player-chip.card-bg{
+  color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,0.85), 0 0 4px rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,0.5);
+}
+.player-chip.card-bg .chip-stat{
+  color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,0.85);
+}

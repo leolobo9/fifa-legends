@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fifa Legends — Gráficos & Médias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="Fifa.css">
+<link rel="stylesheet" href="Fifa_stats.css">
+<script src="chart.umd.min.js"></script>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c49b3a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fifa Legends">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Estatísticas &middot; Carreira</div>
+    <h1>FIFA <span>LEGENDS</span></h1>
+    <div class="sub">Gráficos e médias dos jogadores</div>
+  </header>
+
+  <a href="Fifa.html" class="back-link">← Voltar para a lista</a>
+
+  <section class="panel">
+    <h2>Gráfico comparativo</h2>
+    <div class="hint">Escolha a estatística, a posição e quantos jogadores exibir.</div>
+    <div class="chart-controls">
+      <div class="field">
+        <label for="chartMetric">Estatística</label>
+        <select id="chartMetric">
+          <option value="gols">Gols</option>
+          <option value="assistencias">Assistências</option>
+          <option value="ga">G+A</option>
+          <option value="partidas">Partidas</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="chartPosition">Posição</label>
+        <select id="chartPosition" class="position-filter-select"></select>
+      </div>
+      <div class="field">
+        <label for="chartTopN">Mostrar</label>
+        <select id="chartTopN">
+          <option value="5">Top 5</option>
+          <option value="10" selected>Top 10</option>
+          <option value="15">Top 15</option>
+          <option value="20">Top 20</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="statsChart"></canvas>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Comparar jogadores (até 5)</h2>
+    <div class="hint">Escolha até 5 jogadores para comparar lado a lado em Partidas, Gols, Assistências e G+A.</div>
+    <div class="compare-controls">
+      <input type="text" id="compareSearch" placeholder="Buscar jogador..." autocomplete="off">
+      <select id="compareSelect"></select>
+      <button type="button" id="compareAddBtn" class="backup-btn">+ Adicionar</button>
+      <button type="button" id="compareClearBtn" class="backup-btn">Limpar</button>
+    </div>
+    <div class="compare-chips" id="compareChips"></div>
+    <div class="chart-wrap">
+      <canvas id="compareChart"></canvas>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Melhor média de gols por partida</h2>
+    <div class="hint">Considera apenas jogadores com pelo menos 200 partidas registradas.</div>
+    <div class="chart-controls">
+      <div class="field">
+        <label for="rankGolsPosition">Posição</label>
+        <select id="rankGolsPosition" class="position-filter-select"></select>
+      </div>
+      <div class="field">
+        <label for="rankGolsTopN">Mostrar</label>
+        <select id="rankGolsTopN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="40">Top 40</option>
+          <option value="50">Top 50</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <table class="rank-table">
+      <thead><tr><th>#</th><th class="rank-nome">Jogador</th><th>Partidas</th><th>Gols</th><th>Média</th></tr></thead>
+      <tbody id="rankGols"></tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>Melhor média de assistências por partida</h2>
+    <div class="hint">Considera apenas jogadores com pelo menos 200 partidas registradas.</div>
+    <div class="chart-controls">
+      <div class="field">
+        <label for="rankAssistPosition">Posição</label>
+        <select id="rankAssistPosition" class="position-filter-select"></select>
+      </div>
+      <div class="field">
+        <label for="rankAssistTopN">Mostrar</label>
+        <select id="rankAssistTopN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="40">Top 40</option>
+          <option value="50">Top 50</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <table class="rank-table">
+      <thead><tr><th>#</th><th class="rank-nome">Jogador</th><th>Partidas</th><th>Assistências</th><th>Média</th></tr></thead>
+      <tbody id="rankAssist"></tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>Melhor média de G+A por partida</h2>
+    <div class="hint">Considera apenas jogadores com pelo menos 200 partidas registradas.</div>
+    <div class="chart-controls">
+      <div class="field">
+        <label for="rankGAPosition">Posição</label>
+        <select id="rankGAPosition" class="position-filter-select"></select>
+      </div>
+      <div class="field">
+        <label for="rankGATopN">Mostrar</label>
+        <select id="rankGATopN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="40">Top 40</option>
+          <option value="50">Top 50</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <table class="rank-table">
+      <thead><tr><th>#</th><th class="rank-nome">Jogador</th><th>Partidas</th><th>G+A</th><th>Média</th></tr></thead>
+      <tbody id="rankGA"></tbody>
+    </table>
+  </section>
+
+    <section class="panel">
+    <h2>Times ideais (4-3-3)</h2>
+    <div class="hint">Escolha o critério. Os 3 times são montados automaticamente, sem repetir jogadores entre eles.</div>
+    <div class="chart-controls">
+      <div class="field">
+        <label for="teamMetric">Critério</label>
+        <select id="teamMetric">
+          <option value="gols">Gols</option>
+          <option value="assistencias">Assistências</option>
+          <option value="ga">G+A</option>
+          <option value="partidas">Partidas</option>
+        </select>
+      </div>
+    </div>
+    <div class="ideal-teams-grid">
+      <div class="ideal-team-card">
+        <h3>🥇 Time 1</h3>
+        <div class="pitch" id="pitchTeam1"></div>
+      </div>
+      <div class="ideal-team-card">
+        <h3>🥈 Time 2</h3>
+        <div class="pitch" id="pitchTeam2"></div>
+      </div>
+      <div class="ideal-team-card">
+        <h3>🥉 Time 3</h3>
+        <div class="pitch" id="pitchTeam3"></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script src="Fifa_stats.js"></script>
+<script src="pwa-register.js"></script>
+</body>
+</html>

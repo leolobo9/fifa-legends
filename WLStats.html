@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekend League — Estatísticas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="WL.css">
+<script src="chart.umd.min.js"></script>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c49b3a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fifa Legends">
+</head>
+<body>
+<div class="wrap">
+
+  <a href="WL.html" class="back-link">← Voltar para WL</a>
+
+  <div class="stats-link-wrap">
+    <a href="WLHistorico.html" class="add-btn-wl" style="text-decoration:none; display:inline-block;">📼 Ver Histórico de WLs</a>
+  </div>
+
+  <header>
+    <div class="eyebrow">Fifa Legends &middot; Competitivo</div>
+    <h1>ESTATÍSTICAS <span>DOS JOGADORES</span></h1>
+    <div class="sub">Rankings, MVPs e time ideal com base em todas as suas Weekend Leagues</div>
+  </header>
+
+  <section class="panel">
+    <h2>🔍 Filtros</h2>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="statsFilterEdition">Edição</label>
+        <select id="statsFilterEdition">
+          <option value="">Todas as edições</option>
+          <option value="fifa22">FIFA 22</option>
+          <option value="fifa23">FIFA 23</option>
+          <option value="fc26">EA FC 26</option>
+          <option value="fc27">EA FC 27</option>
+        </select>
+      </div>
+    </div>
+    <div class="view-toggle" style="margin-top:14px;">
+      <button type="button" id="viewByPlayerBtn" class="toggle-btn active">👤 Por jogador</button>
+      <button type="button" id="viewByCardBtn" class="toggle-btn">🃏 Por carta</button>
+    </div>
+  </section>
+
+   <section class="panel">
+    <h2>📋 Estatísticas dos Jogadores</h2>
+    <div class="hint">Mostrando apenas quem tem 5 ou mais partidas registradas.</div>
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table>
+          <thead id="statsTableHead"></thead>
+          <tbody id="statsTbody">
+            <tr class="empty-row"><td colspan="8">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="load-more-wrap" id="loadMoreStatsWrap" style="display:none;">
+      <button type="button" id="loadMoreStatsBtn" class="add-btn-wl">Ler mais</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>🧩 Time Ideal</h2>
+    <div class="hint">Baseado na posição mais usada por cada jogador nas partidas registradas.</div>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="idealEdition">Edição</label>
+        <select id="idealEdition">
+          <option value="">Todas as edições</option>
+          <option value="fifa22">FIFA 22</option>
+          <option value="fifa23">FIFA 23</option>
+          <option value="fc26">EA FC 26</option>
+          <option value="fc27">EA FC 27</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="idealFormation">Formação</label>
+        <select id="idealFormation">
+          <option value="433-4">4-3-3 (4)</option>
+          <option value="41212-2">4-1-2-1-2 (2)</option>
+          <option value="442">4-4-2</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="idealCriterio">Critério</label>
+        <select id="idealCriterio">
+          <option value="media">Média de Nota</option>
+          <option value="gols">Gols</option>
+          <option value="assist">Assistências</option>
+          <option value="ga">G+A</option>
+          <option value="partidas">Partidas</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="idealMinMatches">Mín. de partidas</label>
+        <select id="idealMinMatches">
+          <option value="0">Qualquer quantidade</option>
+          <option value="15">15+ partidas</option>
+          <option value="30">30+ partidas</option>
+          <option value="45">45+ partidas</option>
+          <option value="60">60+ partidas</option>
+          <option value="75">75+ partidas</option>
+          <option value="90">90+ partidas</option>
+        </select>
+      </div>
+    </div>
+    <div id="idealTeamResult" class="formation-rows"></div>
+  </section>
+
+  <section class="panel">
+    <h2>📈 Comparar jogadores</h2>
+    <div class="formation-setup">
+      <div class="field" style="flex:2;">
+        <label for="compareSelect">Jogador</label>
+        <select id="compareSelect"></select>
+      </div>
+      <button type="button" id="compareAddBtn" class="add-btn-wl">+ Adicionar</button>
+      <button type="button" id="compareClearBtn" class="del-wl-btn">Limpar</button>
+    </div>
+    <div class="squad-chips" id="compareChips"></div>
+    <div style="height:340px; margin-top:16px;">
+      <canvas id="compareChart"></canvas>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>🏅 Rankings</h2>
+    <div class="hint">Considera apenas quem tem 5 ou mais partidas. Respeita o filtro de edição lá em cima e o modo "Por jogador"/"Por carta".</div>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="rankPosition">Posição</label>
+        <select id="rankPosition">
+          <option value="">Todas</option>
+          <option value="GOL">GOL · Goleiro</option>
+          <option value="ZAG">ZAG · Zagueiro</option>
+          <option value="LE">LE · Lateral Esquerdo</option>
+          <option value="LD">LD · Lateral Direito</option>
+          <option value="VOL">VOL · Volante</option>
+          <option value="MC">MC · Meio Central</option>
+          <option value="MCA">MCA · Meio Avançado</option>
+          <option value="ATA">ATA · Atacante</option>
+          <option value="PE">PE · Ponta Esquerda</option>
+          <option value="PD">PD · Ponta Direita</option>
+        </select>
+      </div>
+    </div>
+
+    <h3 class="rank-subtitle">⚽ Artilheiros</h3>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="rankGolsTopN">Mostrar</label>
+        <select id="rankGolsTopN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table class="rank-table">
+          <thead><tr><th>#</th><th class="rank-nome">Jogador</th><th>Partidas</th><th>Gols</th><th>Média</th></tr></thead>
+          <tbody id="rankGols"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 class="rank-subtitle">🎯 Garçons</h3>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="rankAssistTopN">Mostrar</label>
+        <select id="rankAssistTopN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table class="rank-table">
+          <thead><tr><th>#</th><th class="rank-nome">Jogador · Carta</th><th>Partidas</th><th>Assistências</th><th>Média</th></tr></thead>
+          <tbody id="rankAssist"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 class="rank-subtitle">🔥 Motor (G+A)</h3>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="rankGATopN">Mostrar</label>
+        <select id="rankGATopN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table class="rank-table">
+          <thead><tr><th>#</th><th class="rank-nome">Jogador · Carta</th><th>Partidas</th><th>G+A</th><th>Média</th></tr></thead>
+          <tbody id="rankGA"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 class="rank-subtitle">⭐ Melhores Médias</h3>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="rankMediaTopN">Mostrar</label>
+        <select id="rankMediaTopN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table class="rank-table">
+          <thead><tr><th>#</th><th class="rank-nome">Jogador · Carta</th><th>Partidas</th><th>Média Nota</th></tr></thead>
+          <tbody id="rankMedia"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 class="rank-subtitle">🏅 Mais Decisivos (MVPs)</h3>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="rankMVPTopN">Mostrar</label>
+        <select id="rankMVPTopN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="all">Todos</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table class="rank-table">
+          <thead><tr><th>#</th><th class="rank-nome">Jogador · Carta</th><th>Partidas</th><th>MVPs</th><th>Média</th></tr></thead>
+          <tbody id="rankMVP"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="WLStats.js"></script>
+<script src="pwa-register.js"></script>
+</body>
+</html>
