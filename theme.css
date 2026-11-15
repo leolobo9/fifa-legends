@@ -1,0 +1,252 @@
+/* ============================================================
+   Fifa Legends — Design System
+   Um app só, uma identidade só: verde esmeralda como cor principal
+   (confiante, de campo, sem clichê de app genérico), dourado usado
+   só pra conquistas reais (artilheiro, MVP, top do ranking).
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  /* superfícies */
+  --bg:#F2F5F3;
+  --surface:#FFFFFF;
+  --surface-sunken:#EBEFEC;
+  --line:#E2E7E4;
+
+  /* texto */
+  --ink:#10201A;
+  --ink-muted:#62716A;
+  --ink-faint:#93A09A;
+
+  /* marca */
+  --primary:#0B8457;
+  --primary-dark:#086B46;
+  --primary-soft:#E1F5EB;
+  --primary-ink:#06382A;
+
+  /* conquista (uso raro, só pra destacar o melhor) */
+  --gold:#C99A2E;
+  --gold-soft:#FBF0D8;
+
+  /* estado */
+  --danger:#D9473F;
+  --danger-soft:#FBE8E6;
+  --silver:#9AA3AC;
+  --bronze:#AD7444;
+
+  /* forma */
+  --radius-sm:10px;
+  --radius-md:14px;
+  --radius-lg:20px;
+  --shadow-card:0 1px 2px rgba(16,32,26,0.04), 0 10px 24px -16px rgba(16,32,26,0.16);
+
+  --font-display:'Outfit',sans-serif;
+  --font-body:'Inter',sans-serif;
+
+  --app-max:480px;
+  --bottom-nav-h:64px;
+
+  /* compat: nomes antigos usados por CSS de páginas ainda não migradas */
+  --muted:var(--ink-muted);
+  --gold-deep:var(--gold);
+  --gold-light:#E3C878;
+  --panel-bg:var(--surface);
+  --crimson:var(--danger);
+  --ok:var(--primary);
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- APP SHELL ---------- */
+.app-shell{
+  max-width:var(--app-max);
+  margin:0 auto;
+  min-height:100vh;
+  background:var(--bg);
+  padding-bottom:calc(var(--bottom-nav-h) + 28px);
+  position:relative;
+}
+
+/* ---------- TOP BAR ---------- */
+.topbar{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px;
+  padding:14px 18px;
+  background:rgba(242,245,243,0.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-brand{ display:flex; align-items:center; gap:9px; text-decoration:none; color:var(--ink); min-width:0; }
+.topbar-mark{ width:30px; height:30px; border-radius:9px; background:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px -4px rgba(11,132,87,0.55); }
+.topbar-mark svg{ width:17px; height:17px; }
+.topbar-title{ font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.topbar-sub{ font-size:11.5px; color:var(--ink-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.topbar-actions{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.topbar-icon-btn{
+  width:36px; height:36px; border-radius:11px; border:none; background:var(--surface-sunken);
+  display:flex; align-items:center; justify-content:center; font-size:16px; text-decoration:none; color:var(--ink);
+  flex-shrink:0;
+}
+.topbar-icon-btn:active{ background:var(--line); }
+.topbar-back{
+  display:inline-flex; align-items:center; gap:6px; color:var(--ink-muted); text-decoration:none;
+  font-family:var(--font-body); font-weight:600; font-size:13.5px; padding:6px 0;
+}
+
+/* ---------- PAGE HEADER (non-sticky, inside content) ---------- */
+.page-head{ padding:18px 18px 4px; }
+.page-head h1{
+  font-family:var(--font-display); font-weight:700; font-size:23px; letter-spacing:-0.01em;
+  margin:0 0 4px; color:var(--ink);
+}
+.page-head .sub{ font-size:13.5px; color:var(--ink-muted); margin:0; }
+
+/* ---------- SECTION / CARD / PANEL ---------- */
+.content{ padding:14px 16px 0; display:flex; flex-direction:column; gap:14px; }
+
+.panel{
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  padding:18px;
+  box-shadow:var(--shadow-card);
+  border:none;
+}
+.panel h2{
+  font-family:var(--font-display); font-weight:700; font-size:16.5px; letter-spacing:-0.005em;
+  margin:0 0 4px; color:var(--ink);
+}
+.panel .hint{ font-size:12.5px; color:var(--ink-muted); margin-bottom:14px; line-height:1.45; }
+
+/* ---------- FORM ELEMENTS ---------- */
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font-family:var(--font-body); font-size:12px; font-weight:600; color:var(--ink-muted); }
+
+input, select, textarea{ font-family:var(--font-body); }
+
+.field input, .field select,
+.search-bar input,
+.filter-row input, .filter-row select,
+.modal-field input, .modal-field select{
+  background:var(--surface-sunken);
+  border:1px solid transparent;
+  border-radius:var(--radius-sm);
+  padding:11px 13px;
+  color:var(--ink);
+  font-size:14.5px;
+  outline:none;
+  transition:border-color .12s, background .12s;
+  width:100%;
+}
+.field input::placeholder, .search-bar input::placeholder{ color:var(--ink-faint); }
+.field input:focus-visible, .field select:focus-visible,
+.search-bar input:focus-visible,
+.filter-row input:focus-visible, .filter-row select:focus-visible,
+.modal-field input:focus-visible, .modal-field select:focus-visible{
+  border-color:var(--primary); background:var(--surface);
+}
+
+/* ---------- BUTTONS ---------- */
+.btn-primary, button.add-btn, button[type="submit"].add-btn{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:var(--radius-sm);
+  padding:13px 20px;
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:14.5px;
+  cursor:pointer;
+  transition:background .12s, transform .08s;
+  white-space:nowrap;
+}
+.btn-primary:active, button.add-btn:active{ transform:scale(0.98); }
+.btn-primary:hover, button.add-btn:hover{ background:var(--primary-dark); }
+
+.btn-ghost{
+  background:var(--surface-sunken);
+  color:var(--ink);
+  border:none;
+  border-radius:var(--radius-sm);
+  padding:11px 16px;
+  font-family:var(--font-body);
+  font-weight:600;
+  font-size:13px;
+  cursor:pointer;
+}
+.btn-ghost:hover{ background:var(--line); }
+
+/* ---------- BOTTOM TAB NAV ---------- */
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  max-width:var(--app-max); margin:0 auto;
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  display:flex;
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+  box-shadow:0 -4px 20px -8px rgba(16,32,26,0.08);
+}
+.bottom-nav a{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  text-decoration:none; color:var(--ink-faint);
+  font-family:var(--font-body); font-weight:600; font-size:10.5px;
+  padding:6px 2px; border-radius:12px;
+}
+.bottom-nav a .nav-ic{ font-size:19px; line-height:1; }
+.bottom-nav a.active{ color:var(--primary); }
+.bottom-nav a.active .nav-ic{ transform:scale(1.05); }
+
+/* ---------- BADGES ---------- */
+.pos-badge{
+  display:inline-block; padding:3px 9px; border-radius:7px;
+  font-family:var(--font-body); font-size:10.5px; font-weight:700; white-space:nowrap;
+}
+.badge-def{ background:#E7EEFC; color:#2456B0; }
+.badge-mei{ background:var(--gold-soft); color:#8A6A1E; }
+.badge-ata{ background:var(--danger-soft); color:#B23931; }
+.badge-none{ background:var(--surface-sunken); color:var(--ink-muted); }
+
+.gender-symbol{ font-size:15px; font-weight:800; }
+.gender-symbol.male{ color:#2C6FCB; }
+.gender-symbol.female{ color:#C54E88; }
+.gender-symbol.none{ color:var(--ink-faint); font-size:12px; }
+
+/* ---------- FOOTER / BACKUP ---------- */
+.backup-actions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.backup-btn{
+  background:var(--surface-sunken); border:none; color:var(--ink);
+  border-radius:var(--radius-sm); padding:9px 14px; font-family:var(--font-body); font-weight:600;
+  font-size:12.5px; cursor:pointer;
+}
+.backup-btn:hover{ background:var(--line); }
+.status-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--primary); margin-right:6px; }
+
+/* ---------- MODAL ---------- */
+.modal-overlay{ position:fixed; inset:0; background:rgba(14,22,18,0.45); z-index:1000; align-items:center; justify-content:center; padding:18px; }
+.modal-panel{
+  background:var(--surface); border:none; border-radius:var(--radius-lg); padding:22px;
+  max-width:420px; width:100%; box-shadow:0 30px 60px -24px rgba(16,32,26,0.4); max-height:88vh; overflow-y:auto;
+}
+.modal-panel h3{ font-family:var(--font-display); font-weight:700; color:var(--ink); margin:0 0 16px; font-size:18px; }
+.modal-field{ margin-bottom:14px; }
+.modal-field label{ display:block; font-family:var(--font-body); font-size:12px; font-weight:600; color:var(--ink-muted); margin-bottom:6px; }
+.modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:6px; }
+.cancel-btn-modal{
+  background:transparent; color:var(--ink-muted); border:none; border-radius:var(--radius-sm);
+  padding:11px 16px; font-family:var(--font-body); font-weight:600; font-size:13.5px; cursor:pointer;
+}
+.cancel-btn-modal:hover{ color:var(--ink); }
+
+@media (min-width:540px){
+  .app-shell{ box-shadow:0 0 0 1px var(--line); min-height:100vh; }
+  body{ padding:24px 0; }
+}

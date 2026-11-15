@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Weekend League Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="WL.css">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#c49b3a">
+<meta name="theme-color" content="#0B8457">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,20 +15,22 @@
 <meta name="apple-mobile-web-app-title" content="Fifa Legends">
 </head>
 <body>
-<div class="wrap">
+<div class="app-shell">
 
-  <a href="Fifa.html" class="back-link">← Voltar</a>
-
-  <header>
-    <div class="eyebrow">Fifa Legends &middot; Competitivo</div>
-    <h1>WEEKEND <span>LEAGUE</span></h1>
-    <div class="sub">Crie, monte o time e registre as partidas da semana</div>
+  <header class="topbar">
+    <a href="Fifa.html" class="topbar-back">← Jogadores</a>
+    <div class="topbar-actions">
+      <a href="WLStats.html" class="topbar-icon-btn" title="Estatísticas dos Jogadores">📊</a>
+      <a href="WLHistorico.html" class="topbar-icon-btn" title="Histórico de WLs">📼</a>
+    </div>
   </header>
 
-  <div class="stats-link-wrap" style="gap:12px;">
-    <a href="WLStats.html" class="add-btn-wl" style="text-decoration:none; display:inline-block;">📊 Estatísticas dos Jogadores</a>
-    <a href="WLHistorico.html" class="add-btn-wl" style="text-decoration:none; display:inline-block;">📼 Histórico de WLs</a>
+  <div class="page-head">
+    <h1>Weekend League</h1>
+    <p class="sub">Crie, monte o time e registre as partidas da semana</p>
   </div>
+
+  <div class="content">
 
   <section class="panel">
     <h2>🏆 Suas Weekend Leagues</h2>
@@ -170,6 +171,15 @@
     </section>
 
   </div>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="Fifa.html"><span class="nav-ic">👤</span>Jogadores</a>
+    <a href="WL.html" class="active"><span class="nav-ic">⚔️</span>Weekend League</a>
+    <a href="WLStats.html"><span class="nav-ic">📊</span>Estatísticas</a>
+    <a href="WLHistorico.html"><span class="nav-ic">🏆</span>Histórico</a>
+  </nav>
 
 </div>
 

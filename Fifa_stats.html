@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fifa Legends — Gráficos & Médias</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="Fifa.css">
 <link rel="stylesheet" href="Fifa_stats.css">
 <script src="chart.umd.min.js"></script>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#c49b3a">
+<meta name="theme-color" content="#0B8457">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,15 +17,21 @@
 <meta name="apple-mobile-web-app-title" content="Fifa Legends">
 </head>
 <body>
-<div class="wrap">
+<div class="app-shell">
 
-  <header>
-    <div class="eyebrow">Estatísticas &middot; Carreira</div>
-    <h1>FIFA <span>LEGENDS</span></h1>
-    <div class="sub">Gráficos e médias dos jogadores</div>
+  <header class="topbar">
+    <a href="Fifa.html" class="topbar-back">← Jogadores</a>
+    <div class="topbar-actions">
+      <a href="Fifa_cards.html" class="topbar-icon-btn" title="Análise por Carta">🃏</a>
+    </div>
   </header>
 
-  <a href="Fifa.html" class="back-link">← Voltar para a lista</a>
+  <div class="page-head">
+    <h1>Gráficos & Médias</h1>
+    <p class="sub">Gráficos e médias dos jogadores</p>
+  </div>
+
+  <div class="content">
 
   <section class="panel">
     <h2>Gráfico comparativo</h2>
@@ -183,6 +188,15 @@
       </div>
     </div>
   </section>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="Fifa.html"><span class="nav-ic">👤</span>Jogadores</a>
+    <a href="WL.html"><span class="nav-ic">⚔️</span>Weekend League</a>
+    <a href="WLStats.html"><span class="nav-ic">📊</span>Estatísticas</a>
+    <a href="WLHistorico.html"><span class="nav-ic">🏆</span>Histórico</a>
+  </nav>
 
 </div>
 <script src="Fifa_stats.js"></script>

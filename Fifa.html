@@ -2,19 +2,12 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fifa Legends — Placar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Fifa Legends — Jogadores</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="Fifa.css">
-<a href="WL.html" class="backup-btn" style="text-decoration:none; display:inline-block;">⚔️ Weekend League</a>
-<a href="Clarinha.html" class="unicorn-btn" title="Para a Clarinha 💖">🦄</a>
-
-<div class="wrap">
-
-  <header>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#c49b3a">
+<meta name="theme-color" content="#0B8457">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,155 +15,176 @@
 <meta name="apple-mobile-web-app-title" content="Fifa Legends">
 </head>
 <body>
-<div class="wrap">
+<div class="app-shell">
 
-  <header>
-    <div class="eyebrow">Estatísticas &middot; Carreira</div>
-    <h1>FIFA <span>LEGENDS</span></h1>
-    <div class="sub">Placar de jogadores &mdash; dados salvos automaticamente</div>
+  <header class="topbar">
+    <a href="Fifa.html" class="topbar-brand">
+      <span class="topbar-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.4 8.5 8 9 4.6-.5 8-4 8-9V5l-8-3z" fill="#fff"/></svg>
+      </span>
+      <span class="topbar-title">Fifa Legends</span>
+    </a>
+    <div class="topbar-actions">
+      <a href="Clarinha.html" class="topbar-icon-btn" title="Para a Clarinha 💖">🦄</a>
+    </div>
   </header>
 
-  <section class="panel">
-    <h2>Adicionar jogador novo</h2>
-    <div class="hint">G+A é calculado automaticamente. Ao confirmar, você escolhe gênero, edição, evento e posições dessa carta. Se o jogador já existir, use o botão "+" na tabela para registrar mais um uso dele.</div>
-    <form id="playerForm">
-      <div class="field nome">
-        <label for="nome">Jogador</label>
-        <input type="text" id="nome" placeholder="Nome do jogador" maxlength="40" required>
-      </div>
-      <div class="field">
-        <label for="partidas">Partidas</label>
-        <input type="number" id="partidas" min="0" placeholder="0" required>
-      </div>
-      <div class="field">
-        <label for="gols">Gols</label>
-        <input type="number" id="gols" min="0" placeholder="0" required>
-      </div>
-      <div class="field">
-        <label for="assistencias">Assistências</label>
-        <input type="number" id="assistencias" min="0" placeholder="0" required>
-      </div>
-      <button type="submit" class="add-btn">+ Adicionar</button>
-      <div class="error-msg" id="errorMsg"></div>
-    </form>
-  </section>
-
-   <div class="main-view-toggle">
-    <button type="button" id="mainViewPlayerBtn" class="toggle-btn-view active">👤 Jogadores</button>
-    <button type="button" id="mainViewCardBtn" class="toggle-btn-view">🃏 Cartas Individuais</button>
+  <div class="page-head">
+    <h1>Jogadores</h1>
+    <p class="sub">Placar e estatísticas — dados salvos automaticamente</p>
   </div>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Buscar jogador pelo nome..." autocomplete="off">
-  </div>
+  <div class="content">
 
-  <div class="filters-panel">
-    <button type="button" id="toggleFilters" class="filters-toggle">🔎 Filtros avançados <span class="arrow">▾</span></button>
-    <div class="filters-body" id="filtersBody" style="display:none;">
-      <div class="filter-row" data-stat="partidas">
-        <span class="filter-label">Partidas</span>
-        <input type="number" min="0" step="50" class="filter-min" placeholder="mín">
-        <span class="filter-sep">até</span>
-        <input type="number" min="0" step="50" class="filter-max" placeholder="máx">
-      </div>
-      <div class="filter-row" data-stat="gols">
-        <span class="filter-label">Gols</span>
-        <input type="number" min="0" step="50" class="filter-min" placeholder="mín">
-        <span class="filter-sep">até</span>
-        <input type="number" min="0" step="50" class="filter-max" placeholder="máx">
-      </div>
-      <div class="filter-row" data-stat="assistencias">
-        <span class="filter-label">Assistências</span>
-        <input type="number" min="0" step="50" class="filter-min" placeholder="mín">
-        <span class="filter-sep">até</span>
-        <input type="number" min="0" step="50" class="filter-max" placeholder="máx">
-      </div>
-      <div class="filter-row" data-stat="ga">
-        <span class="filter-label">G+A</span>
-        <input type="number" min="0" step="50" class="filter-min" placeholder="mín">
-        <span class="filter-sep">até</span>
-        <input type="number" min="0" step="50" class="filter-max" placeholder="máx">
-      </div>
-      <div class="filter-row" data-stat="cartoes">
-        <span class="filter-label">Cartões</span>
-        <input type="number" min="0" step="1" class="filter-min" placeholder="mín">
-        <span class="filter-sep">até</span>
-        <input type="number" min="0" step="1" class="filter-max" placeholder="máx">
-      </div>
-      <div class="filter-row filter-select-row">
-        <span class="filter-label">Posição</span>
-        <select id="filterPosition">
-          <option value="">Todas</option>
-          <option value="GOL">GOL · Goleiro</option>
-          <option value="ZAG">ZAG · Zagueiro</option>
-          <option value="LAT">LAT · Lateral</option>
-          <option value="VOL">VOL · Volante</option>
-          <option value="MC">MC · Meio Campo Central</option>
-          <option value="MCA">MCA · Meio Campo Avançado</option>
-          <option value="ATA">ATA · Atacante</option>
-          <option value="PT">PT · Ponta</option>
-        </select>
-      </div>
-      <div class="filter-row filter-select-row">
-        <span class="filter-label">Edição</span>
-        <select id="filterEdition">
-          <option value="">Todas</option>
-          <option value="fifa19">FIFA 19</option>
-          <option value="fifa20">FIFA 20</option>
-          <option value="fifa21">FIFA 21</option>
-          <option value="fifa22">FIFA 22</option>
-          <option value="fifa23">FIFA 23</option>
-          <option value="fc24">EA FC 24</option>
-          <option value="fc25">EA FC 25</option>
-          <option value="fc26">EA FC 26</option>
-          <option value="fc27">EA FC 27</option>
-        </select>
-      </div>
-      <div class="filter-row">
-        <span class="filter-label">Evento/Carta</span>
-        <input type="text" id="filterEvent" placeholder="ex: TOTY, Ouro..." autocomplete="off">
-      </div>
-      <div class="filter-row filter-select-row">
-        <span class="filter-label">Gênero</span>
-        <select id="filterGender">
-          <option value="">Todos</option>
-          <option value="M">♂ Masculino</option>
-          <option value="F">♀ Feminino</option>
-        </select>
-      </div>
-      <button type="button" id="clearFilters" class="backup-btn">Limpar filtros</button>
+    <section class="panel">
+      <h2>Adicionar jogador novo</h2>
+      <div class="hint">G+A é calculado automaticamente. Ao confirmar, você escolhe gênero, edição, evento e posições dessa carta. Se o jogador já existir, use o botão "+" na tabela para registrar mais um uso dele.</div>
+      <form id="playerForm">
+        <div class="field nome">
+          <label for="nome">Jogador</label>
+          <input type="text" id="nome" placeholder="Nome do jogador" maxlength="40" required>
+        </div>
+        <div class="field">
+          <label for="partidas">Partidas</label>
+          <input type="number" id="partidas" min="0" placeholder="0" required>
+        </div>
+        <div class="field">
+          <label for="gols">Gols</label>
+          <input type="number" id="gols" min="0" placeholder="0" required>
+        </div>
+        <div class="field">
+          <label for="assistencias">Assistências</label>
+          <input type="number" id="assistencias" min="0" placeholder="0" required>
+        </div>
+        <button type="submit" class="add-btn">+ Adicionar</button>
+        <div class="error-msg" id="errorMsg"></div>
+      </form>
+    </section>
+
+    <div class="main-view-toggle">
+      <button type="button" id="mainViewPlayerBtn" class="toggle-btn-view active">👤 Jogadores</button>
+      <button type="button" id="mainViewCardBtn" class="toggle-btn-view">🃏 Cartas Individuais</button>
     </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Buscar jogador pelo nome..." autocomplete="off">
+    </div>
+
+    <div class="filters-panel">
+      <button type="button" id="toggleFilters" class="filters-toggle">🔎 Filtros avançados <span class="arrow">▾</span></button>
+      <div class="filters-body" id="filtersBody" style="display:none;">
+        <div class="filter-row" data-stat="partidas">
+          <span class="filter-label">Partidas</span>
+          <input type="number" min="0" step="50" class="filter-min" placeholder="mín">
+          <span class="filter-sep">até</span>
+          <input type="number" min="0" step="50" class="filter-max" placeholder="máx">
+        </div>
+        <div class="filter-row" data-stat="gols">
+          <span class="filter-label">Gols</span>
+          <input type="number" min="0" step="50" class="filter-min" placeholder="mín">
+          <span class="filter-sep">até</span>
+          <input type="number" min="0" step="50" class="filter-max" placeholder="máx">
+        </div>
+        <div class="filter-row" data-stat="assistencias">
+          <span class="filter-label">Assistências</span>
+          <input type="number" min="0" step="50" class="filter-min" placeholder="mín">
+          <span class="filter-sep">até</span>
+          <input type="number" min="0" step="50" class="filter-max" placeholder="máx">
+        </div>
+        <div class="filter-row" data-stat="ga">
+          <span class="filter-label">G+A</span>
+          <input type="number" min="0" step="50" class="filter-min" placeholder="mín">
+          <span class="filter-sep">até</span>
+          <input type="number" min="0" step="50" class="filter-max" placeholder="máx">
+        </div>
+        <div class="filter-row" data-stat="cartoes">
+          <span class="filter-label">Cartões</span>
+          <input type="number" min="0" step="1" class="filter-min" placeholder="mín">
+          <span class="filter-sep">até</span>
+          <input type="number" min="0" step="1" class="filter-max" placeholder="máx">
+        </div>
+        <div class="filter-row filter-select-row">
+          <span class="filter-label">Posição</span>
+          <select id="filterPosition">
+            <option value="">Todas</option>
+            <option value="GOL">GOL · Goleiro</option>
+            <option value="ZAG">ZAG · Zagueiro</option>
+            <option value="LAT">LAT · Lateral</option>
+            <option value="VOL">VOL · Volante</option>
+            <option value="MC">MC · Meio Campo Central</option>
+            <option value="MCA">MCA · Meio Campo Avançado</option>
+            <option value="ATA">ATA · Atacante</option>
+            <option value="PT">PT · Ponta</option>
+          </select>
+        </div>
+        <div class="filter-row filter-select-row">
+          <span class="filter-label">Edição</span>
+          <select id="filterEdition">
+            <option value="">Todas</option>
+            <option value="fifa19">FIFA 19</option>
+            <option value="fifa20">FIFA 20</option>
+            <option value="fifa21">FIFA 21</option>
+            <option value="fifa22">FIFA 22</option>
+            <option value="fifa23">FIFA 23</option>
+            <option value="fc24">EA FC 24</option>
+            <option value="fc25">EA FC 25</option>
+            <option value="fc26">EA FC 26</option>
+            <option value="fc27">EA FC 27</option>
+          </select>
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">Evento/Carta</span>
+          <input type="text" id="filterEvent" placeholder="ex: TOTY, Ouro..." autocomplete="off">
+        </div>
+        <div class="filter-row filter-select-row">
+          <span class="filter-label">Gênero</span>
+          <select id="filterGender">
+            <option value="">Todos</option>
+            <option value="M">♂ Masculino</option>
+            <option value="F">♀ Feminino</option>
+          </select>
+        </div>
+        <button type="button" id="clearFilters" class="backup-btn">Limpar filtros</button>
+      </div>
+    </div>
+
+    <section class="table-shell">
+      <div class="table-scroll">
+        <table>
+          <thead id="tableHead"></thead>
+          <tbody id="tbody">
+            <tr class="empty-row"><td colspan="10">Carregando dados...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+      <button type="button" id="loadMoreBtn" class="backup-btn">Ler mais</button>
+    </div>
+
+    <section class="panel">
+      <h2>Mais</h2>
+      <div class="backup-actions">
+        <button type="button" id="exportBtn" class="backup-btn">⬇ Exportar backup</button>
+        <button type="button" id="importBtn" class="backup-btn">⬆ Importar backup</button>
+        <button type="button" id="togglePosEdit" class="backup-btn">✏️ Editar posições</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none;">
+        <a href="Fifa_stats.html" class="backup-btn" style="text-decoration:none; display:inline-block;">📊 Ver Gráficos</a>
+        <a href="Fifa_cards.html" class="backup-btn" style="text-decoration:none; display:inline-block;">🃏 Análise por Carta</a>
+        <a href="LostMedia.html" class="backup-btn" style="text-decoration:none; display:inline-block;">📼 Lost Media</a>
+      </div>
+      <div style="margin-top:12px;"><span class="status-dot"></span><span id="statusText">salvo localmente</span></div>
+    </section>
+
   </div>
 
-  <section class="table-shell">
-    <div class="table-scroll">
-      <table>
-                <thead id="tableHead"></thead>
-        <tbody id="tbody">
-          <tr class="empty-row"><td colspan="10">Carregando dados...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-  </section>
-
-  <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
-    <button type="button" id="loadMoreBtn" class="backup-btn">Ler mais</button>
-  </div>
-
-  <footer>
-  <footer>
-    <div class="backup-actions">
-      <button type="button" id="exportBtn" class="backup-btn">⬇ Exportar backup</button>
-      <button type="button" id="importBtn" class="backup-btn">⬆ Importar backup</button>
-      <button type="button" id="togglePosEdit" class="backup-btn">✏️ Editar posições</button>
-      <input type="file" id="importFile" accept="application/json" style="display:none;">
-      <a href="Fifa_stats.html" class="backup-btn" style="text-decoration:none; display:inline-block;">📊 Ver Gráficos</a>
-      <a href="Fifa_cards.html" class="backup-btn" style="text-decoration:none; display:inline-block;">🃏 Análise por Carta</a>
-      <a href="LostMedia.html" class="backup-btn" style="text-decoration:none; display:inline-block;">📼 Lost Media</a>
-    </div>
-    <div><span class="status-dot"></span><span id="statusText">salvo localmente</span></div>
-  </footer>
+  <nav class="bottom-nav">
+    <a href="Fifa.html" class="active"><span class="nav-ic">👤</span>Jogadores</a>
+    <a href="WL.html"><span class="nav-ic">⚔️</span>Weekend League</a>
+    <a href="WLStats.html"><span class="nav-ic">📊</span>Estatísticas</a>
+    <a href="WLHistorico.html"><span class="nav-ic">🏆</span>Histórico</a>
+  </nav>
 
 </div>
 
