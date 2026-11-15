@@ -1,31 +1,30 @@
 /* ============================================================
    Fifa Legends — Design System
-   Um app só, uma identidade só: verde esmeralda como cor principal
-   (confiante, de campo, sem clichê de app genérico), dourado usado
-   só pra conquistas reais (artilheiro, MVP, top do ranking).
+   Um app só, uma identidade só: branco e dourado (como uma carta
+   Icon do Ultimate Team), limpo e mobile-first.
    ============================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root{
   /* superfícies */
-  --bg:#F2F5F3;
+  --bg:#F7F5EF;
   --surface:#FFFFFF;
-  --surface-sunken:#EBEFEC;
-  --line:#E2E7E4;
+  --surface-sunken:#F1EDE1;
+  --line:#E9E2CC;
 
   /* texto */
-  --ink:#10201A;
-  --ink-muted:#62716A;
-  --ink-faint:#93A09A;
+  --ink:#241D0F;
+  --ink-muted:#7A6F58;
+  --ink-faint:#AFA488;
 
   /* marca */
-  --primary:#0B8457;
-  --primary-dark:#086B46;
-  --primary-soft:#E1F5EB;
-  --primary-ink:#06382A;
+  --primary:#B8902E;
+  --primary-dark:#8F6E1F;
+  --primary-soft:#FBF0D8;
+  --primary-ink:#4A3410;
 
   /* conquista (uso raro, só pra destacar o melhor) */
-  --gold:#C99A2E;
+  --gold:#B8902E;
   --gold-soft:#FBF0D8;
 
   /* estado */
@@ -87,7 +86,7 @@ body{
   border-bottom:1px solid var(--line);
 }
 .topbar-brand{ display:flex; align-items:center; gap:9px; text-decoration:none; color:var(--ink); min-width:0; }
-.topbar-mark{ width:30px; height:30px; border-radius:9px; background:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px -4px rgba(11,132,87,0.55); }
+.topbar-mark{ width:30px; height:30px; border-radius:9px; background:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px -4px rgba(184,144,46,0.55); }
 .topbar-mark svg{ width:17px; height:17px; }
 .topbar-title{ font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .topbar-sub{ font-size:11.5px; color:var(--ink-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
