@@ -688,15 +688,15 @@
       const cat = predominantCategory(p);
       const isOpen = expandedIds.has(p.id);
 
-      const mainRow = `<tr class="${podiumClass}" data-id="${p.id}">
+      const mainRow = `<tr class="${podiumClass} row-player" data-id="${p.id}">
         <td class="nome" data-id="${p.id}">${escapeHtml(p.nome)}</td>
-        <td>${p.partidas}</td>
-        <td>${p.gols}</td>
-        <td>${p.assistencias}</td>
-        <td class="ga">${ga(p)}</td>
-        <td><span class="pos-badge badge-${cat.code || 'none'}">${cat.badge}</span></td>
-        <td>${genderBadge(p.genero)}</td>
-        <td class="cartoes">${cardCount(p)}</td>
+        <td data-label="Partidas">${p.partidas}</td>
+        <td data-label="Gols">${p.gols}</td>
+        <td data-label="Assistências">${p.assistencias}</td>
+        <td class="ga" data-label="G+A">${ga(p)}</td>
+        <td data-label="Posição"><span class="pos-badge badge-${cat.code || 'none'}">${cat.badge}</span></td>
+        <td data-label="Gênero">${genderBadge(p.genero)}</td>
+        <td class="cartoes" data-label="Cartões">${cardCount(p)}</td>
         <td><button class="detail-btn ${isOpen ? 'active' : ''}" data-id="${p.id}">${isOpen ? 'Fechar ▲' : 'Ver cartas ▾'}</button></td>
         <td>
           <button class="inc-btn" title="Registrar mais um uso" data-id="${p.id}">+</button>
@@ -737,14 +737,14 @@
       const swatch = getCardSwatch(c.event, c.edition);
       const isOpen = expandedCardIds.has(c.cardId);
 
-      const mainRow = `<tr data-card-id="${c.cardId}">
+      const mainRow = `<tr class="row-card" data-card-id="${c.cardId}">
         <td class="nome"><span class="card-swatch" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:8px;background:${swatch};"></span>${escapeHtml(c.playerName)}</td>
-        <td>${c.partidas}</td>
-        <td>${c.gols}</td>
-        <td>${c.assistencias}</td>
-        <td class="ga">${c.gols + c.assistencias}</td>
-        <td>${edLabel}</td>
-        <td>${evLabel}</td>
+        <td data-label="Partidas">${c.partidas}</td>
+        <td data-label="Gols">${c.gols}</td>
+        <td data-label="Assistências">${c.assistencias}</td>
+        <td class="ga" data-label="G+A">${c.gols + c.assistencias}</td>
+        <td data-label="Edição">${edLabel}</td>
+        <td data-label="Evento">${evLabel}</td>
         <td><button class="detail-btn card-detail-btn ${isOpen ? 'active' : ''}" data-card-id="${c.cardId}">${isOpen ? 'Fechar ▲' : 'Ver detalhes ▾'}</button></td>
       </tr>`;
 

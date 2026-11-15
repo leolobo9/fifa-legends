@@ -1,5 +1,16 @@
 @import url('theme.css');
 
+/* ---------- TABELA DE JOGADORES/CARTAS NO CELULAR ---------- */
+@media (max-width:760px){
+  tbody tr.row-player td:not([data-label]):not(.nome),
+  tbody tr.row-card td:not([data-label]):not(.nome){
+    display:block; border-bottom:none; padding-top:4px; padding-bottom:4px; text-align:center;
+  }
+  tbody tr.row-player td:last-child{ padding-top:2px; padding-bottom:12px; }
+  tbody tr.row-player td:last-child > *{ margin:0 3px; }
+  tbody tr.row-card td:last-child{ padding-bottom:12px; }
+}
+
 /* ---------- MAIN VIEW TOGGLE ---------- */
 .main-view-toggle{ display:flex; gap:6px; background:var(--surface-sunken); padding:4px; border-radius:12px; }
 .toggle-btn-view{
@@ -80,7 +91,8 @@
   box-shadow:var(--shadow-card);
 }
 .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
-table{ width:100%; border-collapse:collapse; min-width:820px; }
+table{ width:100%; border-collapse:collapse; }
+@media (min-width:761px){ table{ min-width:820px; } }
 
 thead th{
   font-family:var(--font-body);
