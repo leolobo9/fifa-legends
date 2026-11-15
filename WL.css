@@ -1,5 +1,14 @@
 @import url('theme.css');
 
+/* ---------- IDENTIDADE PRÓPRIA DA WEEKEND LEAGUE: VERMELHO + DOURADO ---------- */
+:root{
+  --primary:#A6192E;
+  --primary-dark:#7D1322;
+  --primary-soft:#F6DDDF;
+  --primary-ink:#4A0D16;
+}
+.topbar-mark{ box-shadow:0 4px 10px -4px rgba(166,25,46,0.5); }
+
 .back-link{ display:none; } /* substituído pela topbar com botão voltar */
 
 .panel-combined{ box-shadow:var(--shadow-card); }

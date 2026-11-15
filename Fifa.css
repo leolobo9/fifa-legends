@@ -1,14 +1,121 @@
 @import url('theme.css');
 
-/* ---------- TABELA DE JOGADORES/CARTAS NO CELULAR ---------- */
+/* ---------- TABELA DE JOGADORES/CARTAS NO CELULAR: CARD COM TILES ---------- */
 @media (max-width:760px){
-  tbody tr.row-player td:not([data-label]):not(.nome),
-  tbody tr.row-card td:not([data-label]):not(.nome){
-    display:block; border-bottom:none; padding-top:4px; padding-bottom:4px; text-align:center;
+  /* JOGADORES: nome / 4 tiles (PJ, Gols, Assist, G+A) / badges / ações */
+  tbody tr.row-player{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-template-areas:
+      "nome nome nome nome"
+      "pj gols assist ga"
+      "posv genv cartv cartv"
+      "detail detail action action";
+    gap:12px;
+    padding:18px;
   }
-  tbody tr.row-player td:last-child{ padding-top:2px; padding-bottom:12px; }
-  tbody tr.row-player td:last-child > *{ margin:0 3px; }
-  tbody tr.row-card td:last-child{ padding-bottom:12px; }
+  tbody tr.row-player td{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:0; margin:0; border-bottom:none; text-align:center; background:none;
+  }
+  tbody tr.row-player td::before{ content:none; }
+
+  tbody tr.row-player td:nth-child(1){ grid-area:nome; align-items:flex-start; text-align:left; }
+  tbody tr.row-player td:nth-child(2){ grid-area:pj; }
+  tbody tr.row-player td:nth-child(3){ grid-area:gols; }
+  tbody tr.row-player td:nth-child(4){ grid-area:assist; }
+  tbody tr.row-player td:nth-child(5){ grid-area:ga; }
+  tbody tr.row-player td:nth-child(6){ grid-area:posv; align-items:flex-start; }
+  tbody tr.row-player td:nth-child(7){ grid-area:genv; align-items:center; }
+  tbody tr.row-player td:nth-child(8){ grid-area:cartv; align-items:flex-end; flex-direction:row; gap:6px; }
+  tbody tr.row-player td:nth-child(9){ grid-area:detail; }
+  tbody tr.row-player td:nth-child(10){ grid-area:action; flex-direction:row; gap:10px; justify-content:flex-end; }
+
+  tbody tr.row-player td:nth-child(2),
+  tbody tr.row-player td:nth-child(3),
+  tbody tr.row-player td:nth-child(4),
+  tbody tr.row-player td:nth-child(5){
+    background:var(--surface-sunken); border-radius:14px; padding:16px 6px; gap:6px;
+  }
+  tbody tr.row-player td:nth-child(5){ background:var(--primary-soft); }
+
+  tbody tr.row-player td:nth-child(2)::after,
+  tbody tr.row-player td:nth-child(3)::after,
+  tbody tr.row-player td:nth-child(4)::after,
+  tbody tr.row-player td:nth-child(5)::after{
+    content:attr(data-label); font-size:9.5px; font-weight:700; letter-spacing:0.02em;
+    text-transform:uppercase; color:var(--ink-muted); order:2;
+  }
+  tbody tr.row-player td:nth-child(2),
+  tbody tr.row-player td:nth-child(3),
+  tbody tr.row-player td:nth-child(4){ font-family:var(--font-display); font-weight:800; font-size:19px; color:var(--ink); }
+  tbody tr.row-player td:nth-child(5){ font-family:var(--font-display); font-weight:800; font-size:19px; color:var(--primary-dark); }
+
+  tbody tr.row-player td.nome{ font-family:var(--font-display); font-weight:700; font-size:17px; }
+
+  /* CARTAS: nome / 4 tiles / edição+evento / detalhes */
+  tbody tr.row-card{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-template-areas:
+      "nome nome nome nome"
+      "pj gols assist ga"
+      "ed ed ev ev"
+      "detail detail detail detail";
+    gap:12px;
+    padding:18px;
+  }
+  tbody tr.row-card td{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:0; margin:0; border-bottom:none; text-align:center; background:none;
+  }
+  tbody tr.row-card td::before{ content:none; }
+
+  tbody tr.row-card td:nth-child(1){ grid-area:nome; align-items:flex-start; text-align:left; }
+  tbody tr.row-card td:nth-child(2){ grid-area:pj; }
+  tbody tr.row-card td:nth-child(3){ grid-area:gols; }
+  tbody tr.row-card td:nth-child(4){ grid-area:assist; }
+  tbody tr.row-card td:nth-child(5){ grid-area:ga; }
+  tbody tr.row-card td:nth-child(6){ grid-area:ed; align-items:flex-start; }
+  tbody tr.row-card td:nth-child(7){ grid-area:ev; align-items:flex-end; text-align:right; }
+  tbody tr.row-card td:nth-child(8){ grid-area:detail; }
+
+  tbody tr.row-card td:nth-child(2),
+  tbody tr.row-card td:nth-child(3),
+  tbody tr.row-card td:nth-child(4),
+  tbody tr.row-card td:nth-child(5){
+    background:var(--surface-sunken); border-radius:14px; padding:16px 6px; gap:6px;
+  }
+  tbody tr.row-card td:nth-child(5){ background:var(--primary-soft); }
+
+  tbody tr.row-card td:nth-child(2)::after,
+  tbody tr.row-card td:nth-child(3)::after,
+  tbody tr.row-card td:nth-child(4)::after,
+  tbody tr.row-card td:nth-child(5)::after{
+    content:attr(data-label); font-size:9.5px; font-weight:700; letter-spacing:0.02em;
+    text-transform:uppercase; color:var(--ink-muted); order:2;
+  }
+  tbody tr.row-card td:nth-child(2),
+  tbody tr.row-card td:nth-child(3),
+  tbody tr.row-card td:nth-child(4){ font-family:var(--font-display); font-weight:800; font-size:19px; color:var(--ink); }
+  tbody tr.row-card td:nth-child(5){ font-family:var(--font-display); font-weight:800; font-size:19px; color:var(--primary-dark); }
+
+  tbody tr.row-card td.nome{ font-family:var(--font-display); font-weight:700; font-size:17px; }
+  tbody tr.row-card td:nth-child(6)::before{ content:attr(data-label) ": "; font-weight:700; color:var(--ink-muted); }
+  tbody tr.row-card td:nth-child(7)::before{ content:attr(data-label) ": "; font-weight:700; color:var(--ink-muted); }
+  tbody tr.row-card td:nth-child(6),
+  tbody tr.row-card td:nth-child(7){ font-size:12.5px; color:var(--ink); flex-direction:row; gap:4px; flex-wrap:wrap; }
+
+  tbody tr.row-player td:nth-child(9) .detail-btn,
+  tbody tr.row-card td:nth-child(8) .detail-btn{ width:100%; }
+
+  /* ícone de "cartinhas" (cartas FUT do jogador, não cartão de jogo) */
+  .cardstack-ic{ position:relative; display:inline-block; width:15px; height:13px; flex-shrink:0; }
+  .cardstack-ic::before, .cardstack-ic::after{
+    content:""; position:absolute; width:11px; height:8px; border-radius:2.5px; background:var(--primary);
+  }
+  .cardstack-ic::before{ top:0; left:0; opacity:0.4; transform:rotate(-10deg); }
+  .cardstack-ic::after{ top:3px; left:3px; transform:rotate(5deg); }
 }
 
 /* ---------- MAIN VIEW TOGGLE ---------- */
@@ -138,7 +245,7 @@ tbody tr.top2{ border-left:3px solid var(--silver); }
 tbody tr.top3{ border-left:3px solid var(--bronze); }
 
 td.ga{ color:var(--primary); font-weight:700; }
-td.cartoes{ color:var(--danger); }
+td.cartoes{ color:var(--primary-dark); font-weight:700; }
 
 .gender-options{ display:flex; gap:20px; margin-top:4px; }
 

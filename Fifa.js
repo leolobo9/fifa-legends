@@ -619,7 +619,7 @@
     {key:'ga', label:'G+A'},
     {key:'categoria', label:'Posição'},
     {key:'genero', label:'Gênero'},
-    {key:'cartoes', label:'Cartões'},
+    {key:'cartoes', label:'Cartinhas'},
     {key:null, label:'Detalhes'},
     {key:null, label:''}
   ];
@@ -696,7 +696,7 @@
         <td class="ga" data-label="G+A">${ga(p)}</td>
         <td data-label="Posição"><span class="pos-badge badge-${cat.code || 'none'}">${cat.badge}</span></td>
         <td data-label="Gênero">${genderBadge(p.genero)}</td>
-        <td class="cartoes" data-label="Cartões">${cardCount(p)}</td>
+        <td class="cartoes" data-label="Cartinhas"><span class="cardstack-ic" aria-hidden="true"></span>${cardCount(p)}</td>
         <td><button class="detail-btn ${isOpen ? 'active' : ''}" data-id="${p.id}">${isOpen ? 'Fechar ▲' : 'Ver cartas ▾'}</button></td>
         <td>
           <button class="inc-btn" title="Registrar mais um uso" data-id="${p.id}">+</button>
