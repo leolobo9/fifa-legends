@@ -282,14 +282,19 @@ input, select, textarea{ font-family:var(--font-body); }
   body{ padding:24px 0; }
 }
 
-/* Acima de 760px é tela de computador: aqui o app abre largo, como um
-   site/dashboard normal, em vez de ficar espremido numa coluna de celular. */
+/* Acima de 760px é tela de computador: aqui o app usa a tela toda, como um
+   site/dashboard normal, em vez de ficar espremido numa coluna de celular.
+   Isso só vale pra tela de PC — o @media acima cuida do celular/app instalado,
+   que continua do jeito que está. */
 @media (min-width:761px){
   .app-shell{
-    max-width:1100px;
-    box-shadow:0 0 0 1px var(--line);
+    max-width:none;
+    box-shadow:none;
     min-height:100vh;
   }
-  .bottom-nav{ max-width:1100px; }
+  .bottom-nav{ max-width:none; }
   body{ padding:24px 0; }
+  .topbar{ padding:14px 40px; }
+  .page-head{ padding:18px 40px 4px; }
+  .content{ padding:14px 40px 0; }
 }
