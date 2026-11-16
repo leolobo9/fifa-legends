@@ -57,12 +57,16 @@
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 
+html{ touch-action:manipulation; } /* tira o zoom de duplo-toque e pinça, pra não parecer navegador */
+
 body{
   background:var(--bg);
   color:var(--ink);
   font-family:var(--font-body);
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
+  touch-action:manipulation;
+  overscroll-behavior-y:contain;
 }
 
 /* ---------- APP SHELL ---------- */
