@@ -345,19 +345,72 @@
         }
       }
     });
-    savePlayers();
+    persistLocal();
 
     render();
+    syncFromCloudOnLoad();
+  }
+
+  function persistLocal(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(players)); } catch(e){}
   }
 
   function savePlayers(){
     try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+      persistLocal();
+      setLocalTs(Date.now());
       statusText.textContent = 'salvo localmente';
+      pushToCloud();
     } catch(e){
       console.error('Erro ao salvar dados', e);
       statusText.textContent = 'erro ao salvar';
     }
+  }
+
+  /* ---------- SINCRONIZAÇÃO COM A NUVEM (Firebase) ---------- */
+  const TS_KEY = STORAGE_KEY + '__ts';
+  function getLocalTs(){ return Number(localStorage.getItem(TS_KEY) || 0); }
+  function setLocalTs(ts){ try{ localStorage.setItem(TS_KEY, String(ts)); } catch(e){} }
+
+  function whenFifaSyncReady(cb){
+    if(window.FifaSync){ cb(window.FifaSync); return; }
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      if(window.FifaSync){ clearInterval(t); cb(window.FifaSync); }
+      else if(tries > 100){ clearInterval(t); }
+    }, 100);
+  }
+
+  function pushToCloud(){
+    whenFifaSyncReady((FifaSync) => {
+      FifaSync.save(FifaSync.KEYS.PLAYERS, players, getLocalTs());
+    });
+  }
+
+  function applyCloudPlayers(data, ts){
+    players = (data || []).map(normalizePlayer);
+    persistLocal();
+    setLocalTs(ts);
+    render();
+  }
+
+  function syncFromCloudOnLoad(){
+    whenFifaSyncReady(async (FifaSync) => {
+      const cloud = await FifaSync.load(FifaSync.KEYS.PLAYERS);
+      let localTs = getLocalTs();
+      if(cloud && cloud.updatedAt > localTs){
+        applyCloudPlayers(cloud.data, cloud.updatedAt);
+      } else {
+        if(localTs === 0){ localTs = Date.now(); setLocalTs(localTs); }
+        pushToCloud();
+      }
+      FifaSync.watch(FifaSync.KEYS.PLAYERS, (data, ts) => {
+        if(ts > getLocalTs()){
+          applyCloudPlayers(data, ts);
+        }
+      });
+    });
   }
 
   function ga(p){ return (Number(p.gols)||0) + (Number(p.assistencias)||0); }

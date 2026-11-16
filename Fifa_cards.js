@@ -255,6 +255,48 @@
     });
   }
 
+  /* ---------- SINCRONIZAÇÃO COM A NUVEM (Firebase, somente leitura) ---------- */
+  function whenFifaSyncReadyCd(cb){
+    if(window.FifaSync){ cb(window.FifaSync); return; }
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      if(window.FifaSync){ clearInterval(t); cb(window.FifaSync); }
+      else if(tries > 100){ clearInterval(t); }
+    }, 100);
+  }
+
+  function renderEverythingCards(){
+    renderChart();
+    populateCardCompareSelect();
+    renderCardCompareChart();
+    renderCardRankings();
+    renderIdealCardTeams();
+  }
+
+  function applyCloudPlayersCd(data, ts){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data || []));
+      localStorage.setItem(STORAGE_KEY + '__ts', String(ts));
+    } catch(e){}
+    loadData();
+    renderEverythingCards();
+  }
+
+  function syncFromCloudOnLoad(){
+    whenFifaSyncReadyCd(async (FifaSync) => {
+      const cloud = await FifaSync.load(FifaSync.KEYS.PLAYERS);
+      const localTs = Number(localStorage.getItem(STORAGE_KEY + '__ts') || 0);
+      if(cloud && cloud.updatedAt > localTs){
+        applyCloudPlayersCd(cloud.data, cloud.updatedAt);
+      }
+      FifaSync.watch(FifaSync.KEYS.PLAYERS, (data, ts) => {
+        const lts = Number(localStorage.getItem(STORAGE_KEY + '__ts') || 0);
+        if(ts > lts){ applyCloudPlayersCd(data, ts); }
+      });
+    });
+  }
+
   /* ---------- GRÁFICO 1: TOP N POR CARTA ---------- */
   const cardMetric = document.getElementById('cardMetric');
   const cardEdition = document.getElementById('cardEdition');
@@ -631,4 +673,5 @@
   renderCardCompareChart();
   renderCardRankings();
   renderIdealCardTeams();
+  syncFromCloudOnLoad();
 })();

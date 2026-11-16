@@ -12,6 +12,48 @@
     }
   }
 
+  /* ---------- SINCRONIZAÇÃO COM A NUVEM (Firebase, somente leitura) ---------- */
+  function whenFifaSyncReadySt(cb){
+    if(window.FifaSync){ cb(window.FifaSync); return; }
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      if(window.FifaSync){ clearInterval(t); cb(window.FifaSync); }
+      else if(tries > 100){ clearInterval(t); }
+    }, 100);
+  }
+
+  function renderEverything(){
+    renderChart();
+    populateCompareSelect();
+    renderCompareChart();
+    renderRankings();
+    renderIdealTeams();
+  }
+
+  function applyCloudPlayersSt(data, ts){
+    players = data || [];
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+      localStorage.setItem(STORAGE_KEY + '__ts', String(ts));
+    } catch(e){}
+    renderEverything();
+  }
+
+  function syncFromCloudOnLoad(){
+    whenFifaSyncReadySt(async (FifaSync) => {
+      const cloud = await FifaSync.load(FifaSync.KEYS.PLAYERS);
+      const localTs = Number(localStorage.getItem(STORAGE_KEY + '__ts') || 0);
+      if(cloud && cloud.updatedAt > localTs){
+        applyCloudPlayersSt(cloud.data, cloud.updatedAt);
+      }
+      FifaSync.watch(FifaSync.KEYS.PLAYERS, (data, ts) => {
+        const lts = Number(localStorage.getItem(STORAGE_KEY + '__ts') || 0);
+        if(ts > lts){ applyCloudPlayersSt(data, ts); }
+      });
+    });
+  }
+
   function ga(p){ return (Number(p.gols)||0) + (Number(p.assistencias)||0); }
   function escapeHtml(str){
     const div = document.createElement('div');
@@ -388,4 +430,5 @@
   renderCompareChart();
   renderRankings();
   renderIdealTeams();
+  syncFromCloudOnLoad();
 })();

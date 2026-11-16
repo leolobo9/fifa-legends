@@ -54,6 +54,40 @@
     } catch(e){ wls = []; }
   }
 
+  /* ---------- SINCRONIZAÇÃO COM A NUVEM (Firebase, somente leitura) ---------- */
+  function whenFifaSyncReadyHi(cb){
+    if(window.FifaSync){ cb(window.FifaSync); return; }
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      if(window.FifaSync){ clearInterval(t); cb(window.FifaSync); }
+      else if(tries > 100){ clearInterval(t); }
+    }, 100);
+  }
+
+  function applyCloudWLHi(data, ts){
+    wls = data || [];
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(wls));
+      localStorage.setItem(STORAGE_KEY + '__ts', String(ts));
+    } catch(e){}
+    renderAll();
+  }
+
+  function syncFromCloudOnLoad(){
+    whenFifaSyncReadyHi(async (FifaSync) => {
+      const cloud = await FifaSync.load(FifaSync.KEYS.WL);
+      const localTs = Number(localStorage.getItem(STORAGE_KEY + '__ts') || 0);
+      if(cloud && cloud.updatedAt > localTs){
+        applyCloudWLHi(cloud.data, cloud.updatedAt);
+      }
+      FifaSync.watch(FifaSync.KEYS.WL, (data, ts) => {
+        const lts = Number(localStorage.getItem(STORAGE_KEY + '__ts') || 0);
+        if(ts > lts){ applyCloudWLHi(data, ts); }
+      });
+    });
+  }
+
   function getFilteredWLs(){
     const f = historicoFilterEdition ? historicoFilterEdition.value : '';
     return f ? wls.filter(w => getEffectiveEdition(w) === f) : wls;
@@ -253,4 +287,5 @@
 
   loadAll();
   renderAll();
+  syncFromCloudOnLoad();
 })();

@@ -301,13 +301,72 @@
     if(wls.length > 0) currentWLId = wls[0].id;
     renderWLSelect();
     renderCurrentWL();
-    saveAll();
+    persistLocalWL();
+    syncFromCloudOnLoad();
+  }
+
+  function persistLocalWL(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(wls)); } catch(e){}
   }
 
   function saveAll(){
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(wls)); }
+    try{
+      persistLocalWL();
+      setLocalTsWL(Date.now());
+      pushToCloudWL();
+    }
     catch(e){ console.error('Erro ao salvar', e); }
     renderNameSuggestions();
+  }
+
+  /* ---------- SINCRONIZAÇÃO COM A NUVEM (Firebase) ---------- */
+  const TS_KEY_WL = STORAGE_KEY + '__ts';
+  function getLocalTsWL(){ return Number(localStorage.getItem(TS_KEY_WL) || 0); }
+  function setLocalTsWL(ts){ try{ localStorage.setItem(TS_KEY_WL, String(ts)); } catch(e){} }
+
+  function whenFifaSyncReadyWL(cb){
+    if(window.FifaSync){ cb(window.FifaSync); return; }
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      if(window.FifaSync){ clearInterval(t); cb(window.FifaSync); }
+      else if(tries > 100){ clearInterval(t); }
+    }, 100);
+  }
+
+  function pushToCloudWL(){
+    whenFifaSyncReadyWL((FifaSync) => {
+      FifaSync.save(FifaSync.KEYS.WL, wls, getLocalTsWL());
+    });
+  }
+
+  function applyCloudWL(data, ts){
+    wls = data || [];
+    wls.forEach(w => { if(!w.edition) w.edition = 'fifa23'; });
+    persistLocalWL();
+    setLocalTsWL(ts);
+    if(wls.length > 0 && !wls.find(w => w.id === currentWLId)) currentWLId = wls[0].id;
+    renderWLSelect();
+    renderCurrentWL();
+    renderNameSuggestions();
+  }
+
+  function syncFromCloudOnLoad(){
+    whenFifaSyncReadyWL(async (FifaSync) => {
+      const cloud = await FifaSync.load(FifaSync.KEYS.WL);
+      let localTs = getLocalTsWL();
+      if(cloud && cloud.updatedAt > localTs){
+        applyCloudWL(cloud.data, cloud.updatedAt);
+      } else {
+        if(localTs === 0){ localTs = Date.now(); setLocalTsWL(localTs); }
+        pushToCloudWL();
+      }
+      FifaSync.watch(FifaSync.KEYS.WL, (data, ts) => {
+        if(ts > getLocalTsWL()){
+          applyCloudWL(data, ts);
+        }
+      });
+    });
   }
 
   /* ---------- SUGESTÕES DE NOME (autocomplete) ---------- */
