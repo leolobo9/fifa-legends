@@ -9,6 +9,21 @@
 }
 .topbar-mark{ box-shadow:0 4px 10px -4px rgba(166,25,46,0.5); }
 
+/* ---------- SUGESTÕES DE NOME (dropdown próprio, mais confiável que o datalist nativo no PWA) ---------- */
+.name-ac-dropdown{
+  position:fixed; z-index:200;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm);
+  box-shadow:0 10px 28px -8px rgba(16,32,26,0.25);
+  max-height:220px; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.name-ac-item{
+  padding:11px 14px; font-family:var(--font-body); font-size:14px; color:var(--ink);
+  cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.name-ac-item:not(:last-child){ border-bottom:1px solid var(--line); }
+.name-ac-item:active, .name-ac-item.highlighted{ background:var(--primary-soft); color:var(--primary-ink); }
+
 .back-link{ display:none; } /* substituído pela topbar com botão voltar */
 
 .panel-combined{ box-shadow:var(--shadow-card); }

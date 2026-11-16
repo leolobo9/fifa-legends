@@ -391,8 +391,64 @@
 
   function renderNameSuggestions(){
     const list = document.getElementById('allPlayerNamesList');
-    if(!list) return;
-    list.innerHTML = getAllKnownPlayerNames().map(n => `<option value="${escapeHtml(n)}"></option>`).join('');
+    if(list) list.innerHTML = getAllKnownPlayerNames().map(n => `<option value="${escapeHtml(n)}"></option>`).join('');
+  }
+
+  /* ---------- DROPDOWN PRÓPRIO DE SUGESTÕES ----------
+     O <datalist> nativo não abre de forma confiável no app instalado (PWA) no
+     celular, então aqui a gente desenha a própria lista por baixo do campo. */
+  function setupNameAutocomplete(){
+    const dropdown = document.createElement('div');
+    dropdown.className = 'name-ac-dropdown';
+    dropdown.style.display = 'none';
+    document.body.appendChild(dropdown);
+    let activeInput = null;
+
+    function hideDropdown(){
+      dropdown.style.display = 'none';
+      activeInput = null;
+    }
+
+    function positionDropdown(input){
+      const rect = input.getBoundingClientRect();
+      dropdown.style.left = Math.max(8, rect.left) + 'px';
+      dropdown.style.top = (rect.bottom + 4) + 'px';
+      dropdown.style.width = rect.width + 'px';
+    }
+
+    function showSuggestionsFor(input){
+      const q = normalizeName(input.value || '');
+      const names = getAllKnownPlayerNames();
+      const matches = (q ? names.filter(n => normalizeName(n).includes(q)) : names).slice(0, 8);
+      if(!matches.length){ hideDropdown(); return; }
+      activeInput = input;
+      dropdown.innerHTML = matches.map(n => `<div class="name-ac-item">${escapeHtml(n)}</div>`).join('');
+      positionDropdown(input);
+      dropdown.style.display = 'block';
+    }
+
+    dropdown.addEventListener('mousedown', (e) => {
+      const item = e.target.closest('.name-ac-item');
+      if(!item || !activeInput) return;
+      e.preventDefault();
+      const input = activeInput;
+      input.value = item.textContent;
+      input.dispatchEvent(new Event('input', { bubbles:true }));
+      input.dispatchEvent(new Event('change', { bubbles:true }));
+      hideDropdown();
+    });
+
+    document.addEventListener('focusin', (e) => {
+      if(e.target.matches && e.target.matches('.name-ac-input')) showSuggestionsFor(e.target);
+    });
+    document.addEventListener('input', (e) => {
+      if(e.target.matches && e.target.matches('.name-ac-input')) showSuggestionsFor(e.target);
+    });
+    document.addEventListener('click', (e) => {
+      if(activeInput && e.target !== activeInput && !dropdown.contains(e.target)) hideDropdown();
+    });
+    window.addEventListener('resize', hideDropdown);
+    window.addEventListener('scroll', () => { if(activeInput) positionDropdown(activeInput); }, true);
   }
 
   function getCurrentWL(){
@@ -542,7 +598,7 @@
         return `
         <div class="formation-row">
           <span class="pos-tag">${slot.code}</span>
-          <input type="text" class="fr-nome" data-idx="${idx}" list="allPlayerNamesList" placeholder="Nome do jogador (${slot.label})" value="${matched ? escapeHtml(matched.nome) : ''}" autocomplete="off">
+          <input type="text" class="fr-nome name-ac-input" data-idx="${idx}" placeholder="Nome do jogador (${slot.label})" value="${matched ? escapeHtml(matched.nome) : ''}" autocomplete="off">
           <input type="text" class="fr-event" data-idx="${idx}" list="${datalistId}" placeholder="Evento/Raridade" value="${matched ? escapeHtml(matched.event||'') : ''}" autocomplete="off">
           <button type="button" class="clear-row-btn" data-idx="${idx}" title="Limpar esta vaga">&times;</button>
         </div>`;
@@ -1369,5 +1425,6 @@
     renderSquadChips(); renderSquadStatsTable(); renderMatchesTable(); renderSummary();
   }
 
+  setupNameAutocomplete();
   loadAll();
 })();
