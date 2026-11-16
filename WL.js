@@ -301,6 +301,7 @@
     if(wls.length > 0) currentWLId = wls[0].id;
     renderWLSelect();
     renderCurrentWL();
+    renderNameSuggestions();
     persistLocalWL();
     syncFromCloudOnLoad();
   }
@@ -372,6 +373,15 @@
   /* ---------- SUGESTÕES DE NOME (autocomplete) ---------- */
   function getAllKnownPlayerNames(){
     const seen = new Map(); // nameKey normalizado -> nome como foi digitado
+
+    /* Jogadores já cadastrados na página principal (Jogadores) */
+    try{
+      const raw = localStorage.getItem('fifa_legends_players');
+      const mainPlayers = raw ? JSON.parse(raw) : [];
+      (mainPlayers||[]).forEach(p => { const k = normalizeName(p.nome||''); if(p.nome && !seen.has(k)) seen.set(k, p.nome); });
+    } catch(e){}
+
+    /* Jogadores já usados em alguma WL anterior */
     wls.forEach(wl => {
       (wl.squad||[]).forEach(p => { const k = normalizeName(p.nome); if(p.nome && !seen.has(k)) seen.set(k, p.nome); });
       (wl.matches||[]).forEach(m => (m.playerStats||[]).forEach(p => { const k = normalizeName(p.nome); if(p.nome && !seen.has(k)) seen.set(k, p.nome); }));
