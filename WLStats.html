@@ -21,17 +21,21 @@
 
   <header class="topbar">
     <a href="WL.html" class="topbar-back">← Weekend League</a>
-    <div class="topbar-actions">
-      <a href="WLHistorico.html" class="topbar-icon-btn" title="Histórico de WLs">📼</a>
-    </div>
   </header>
 
   <div class="page-head">
-    <h1>Estatísticas dos Jogadores</h1>
-    <p class="sub">Rankings, MVPs e time ideal com base em todas as suas Weekend Leagues</p>
+    <h1>Estatísticas & Histórico</h1>
+    <p class="sub">Rankings, time ideal e o histórico de todas as suas Weekend Leagues</p>
   </div>
 
   <div class="content">
+
+  <div class="view-toggle" style="margin-bottom:16px;">
+    <button type="button" id="wlPageViewStatsBtn" class="toggle-btn active">📊 Estatísticas</button>
+    <button type="button" id="wlPageViewHistoricoBtn" class="toggle-btn">🏆 Histórico</button>
+  </div>
+
+  <div id="wlStatsPageView">
 
   <section class="panel">
     <h2>🔍 Filtros</h2>
@@ -265,16 +269,69 @@
 
   </div>
 
+  <div id="wlHistoricoPageView" style="display:none;">
+
+  <section class="panel">
+    <h2>🔍 Filtros</h2>
+    <div class="formation-setup">
+      <div class="field">
+        <label for="historicoFilterEdition">Edição</label>
+        <select id="historicoFilterEdition">
+          <option value="">Todas as edições</option>
+          <option value="fifa22">FIFA 22</option>
+          <option value="fifa23">FIFA 23</option>
+          <option value="fc26">EA FC 26</option>
+          <option value="fc27">EA FC 27</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>📊 Resumo Geral</h2>
+    <div class="summary-grid" id="summaryGrid"></div>
+  </section>
+
+  <section class="panel">
+    <h2>📼 Ver uma WL específica</h2>
+    <select id="wlPickerSelect" style="width:100%; margin-bottom:14px;"></select>
+    <div id="wlPickerDetail"></div>
+  </section>
+
+  </div>
+
+  </div>
+
   <nav class="bottom-nav">
     <a href="Fifa.html"><span class="nav-ic">👤</span>Jogadores</a>
     <a href="WL.html"><span class="nav-ic">⚔️</span>Weekend League</a>
     <a href="WLStats.html" class="active"><span class="nav-ic">📊</span>Estatísticas</a>
-    <a href="WLHistorico.html"><span class="nav-ic">🏆</span>Histórico</a>
   </nav>
 
 </div>
 
 <script src="WLStats.js"></script>
+<script src="WLHistorico.js"></script>
+<script>
+  (function(){
+    var statsBtn = document.getElementById('wlPageViewStatsBtn');
+    var histBtn = document.getElementById('wlPageViewHistoricoBtn');
+    var statsView = document.getElementById('wlStatsPageView');
+    var histView = document.getElementById('wlHistoricoPageView');
+    statsBtn.addEventListener('click', function(){
+      statsView.style.display = '';
+      histView.style.display = 'none';
+      statsBtn.classList.add('active');
+      histBtn.classList.remove('active');
+    });
+    histBtn.addEventListener('click', function(){
+      statsView.style.display = 'none';
+      histView.style.display = '';
+      histBtn.classList.add('active');
+      statsBtn.classList.remove('active');
+    });
+  })();
+</script>
 <script src="pwa-register.js"></script>
 </body>
 </html>
