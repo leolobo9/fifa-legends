@@ -275,7 +275,21 @@ input, select, textarea{ font-family:var(--font-body); }
 }
 .cancel-btn-modal:hover{ color:var(--ink); }
 
-@media (min-width:540px){
+/* Entre 540px e 760px (tablet pequeno / celular deitado): ainda é o "app"
+   estreito, só com uma moldura pra não colar nas bordas do navegador. */
+@media (min-width:540px) and (max-width:760px){
   .app-shell{ box-shadow:0 0 0 1px var(--line); min-height:100vh; }
+  body{ padding:24px 0; }
+}
+
+/* Acima de 760px é tela de computador: aqui o app abre largo, como um
+   site/dashboard normal, em vez de ficar espremido numa coluna de celular. */
+@media (min-width:761px){
+  .app-shell{
+    max-width:1100px;
+    box-shadow:0 0 0 1px var(--line);
+    min-height:100vh;
+  }
+  .bottom-nav{ max-width:1100px; }
   body{ padding:24px 0; }
 }
