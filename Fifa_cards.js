@@ -472,6 +472,18 @@
   const rankCardAssistEdition = document.getElementById('rankCardAssistEdition');
   const rankCardGAEdition = document.getElementById('rankCardGAEdition');
   const MIN_PARTIDAS_CARTA = 10;
+  const rankCardMode = { gols:'total', assist:'total', ga:'total' };
+  function setupCardStatModeToggle(toggleId, key, onChange){
+    const toggle = document.getElementById(toggleId);
+    if(!toggle) return;
+    toggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('.stat-mode-btn');
+      if(!btn) return;
+      rankCardMode[key] = btn.dataset.mode;
+      toggle.querySelectorAll('.stat-mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+      onChange();
+    });
+  }
 
   function renderCardRankRow(c, i, statValue, media){
     const ed = c.edition ? (EDITION_LABEL[c.edition] || c.edition) : 'Não informado';
@@ -486,32 +498,29 @@
     </tr>`;
   }
 
+  function buildCardRankRows(statKey, totalFn, editionSel, positionSel, topNSel){
+    let rows = cardsFlat
+      .filter(c => c.partidas >= MIN_PARTIDAS_CARTA && matchesPositionFilter(c.positions, positionSel.value) && matchesEditionFilter(c.edition, editionSel.value))
+      .map(c => ({ c, total: totalFn(c), media: totalFn(c) / c.partidas }));
+    rows.sort(rankCardMode[statKey] === 'media' ? (a,b) => b.media - a.media : (a,b) => b.total - a.total);
+    if(topNSel.value !== 'all') rows = rows.slice(0, Number(topNSel.value));
+    return rows;
+  }
+
   function renderCardRankings(){
-    let byGols = cardsFlat
-      .filter(c => c.partidas >= MIN_PARTIDAS_CARTA && matchesPositionFilter(c.positions, rankCardGolsPosition.value) && matchesEditionFilter(c.edition, rankCardGolsEdition.value))
-      .map(c => ({ c, media: c.gols / c.partidas }))
-      .sort((a,b) => b.media - a.media);
-    if(rankCardGolsTopN.value !== 'all') byGols = byGols.slice(0, Number(rankCardGolsTopN.value));
+    const byGols = buildCardRankRows('gols', c => c.gols, rankCardGolsEdition, rankCardGolsPosition, rankCardGolsTopN);
     rankCardGolsBody.innerHTML = byGols.length
-      ? byGols.map((x,i) => renderCardRankRow(x.c, i, x.c.gols, x.media)).join('')
+      ? byGols.map((x,i) => renderCardRankRow(x.c, i, x.total, x.media)).join('')
       : '<tr><td colspan="5">Sem dados suficientes.</td></tr>';
 
-    let byAssist = cardsFlat
-      .filter(c => c.partidas >= MIN_PARTIDAS_CARTA && matchesPositionFilter(c.positions, rankCardAssistPosition.value) && matchesEditionFilter(c.edition, rankCardAssistEdition.value))
-      .map(c => ({ c, media: c.assistencias / c.partidas }))
-      .sort((a,b) => b.media - a.media);
-    if(rankCardAssistTopN.value !== 'all') byAssist = byAssist.slice(0, Number(rankCardAssistTopN.value));
+    const byAssist = buildCardRankRows('assist', c => c.assistencias, rankCardAssistEdition, rankCardAssistPosition, rankCardAssistTopN);
     rankCardAssistBody.innerHTML = byAssist.length
-      ? byAssist.map((x,i) => renderCardRankRow(x.c, i, x.c.assistencias, x.media)).join('')
+      ? byAssist.map((x,i) => renderCardRankRow(x.c, i, x.total, x.media)).join('')
       : '<tr><td colspan="5">Sem dados suficientes.</td></tr>';
 
-    let byGA = cardsFlat
-      .filter(c => c.partidas >= MIN_PARTIDAS_CARTA && matchesPositionFilter(c.positions, rankCardGAPosition.value) && matchesEditionFilter(c.edition, rankCardGAEdition.value))
-      .map(c => ({ c, media: cardGA(c) / c.partidas }))
-      .sort((a,b) => b.media - a.media);
-    if(rankCardGATopN.value !== 'all') byGA = byGA.slice(0, Number(rankCardGATopN.value));
+    const byGA = buildCardRankRows('ga', c => cardGA(c), rankCardGAEdition, rankCardGAPosition, rankCardGATopN);
     rankCardGABody.innerHTML = byGA.length
-      ? byGA.map((x,i) => renderCardRankRow(x.c, i, cardGA(x.c), x.media)).join('')
+      ? byGA.map((x,i) => renderCardRankRow(x.c, i, x.total, x.media)).join('')
       : '<tr><td colspan="5">Sem dados suficientes.</td></tr>';
   }
   rankCardGolsTopN.addEventListener('change', renderCardRankings);
@@ -523,6 +532,9 @@
   rankCardGolsEdition.addEventListener('change', renderCardRankings);
   rankCardAssistEdition.addEventListener('change', renderCardRankings);
   rankCardGAEdition.addEventListener('change', renderCardRankings);
+  setupCardStatModeToggle('rankCardGolsModeToggle', 'gols', renderCardRankings);
+  setupCardStatModeToggle('rankCardAssistModeToggle', 'assist', renderCardRankings);
+  setupCardStatModeToggle('rankCardGAModeToggle', 'ga', renderCardRankings);
 
   /* ---------- TIMES IDEAIS POR EDIÇÃO ---------- */
   const FORMATION_433 = [

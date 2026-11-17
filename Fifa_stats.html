@@ -87,9 +87,17 @@
   </section>
 
   <section class="panel">
-    <h2>Melhor média de gols por partida</h2>
+    <h2>Gols — artilheiros e melhor média</h2>
     <div class="hint">Considera apenas jogadores com pelo menos 200 partidas registradas.</div>
+    <div class="stat-mode-toggle" id="rankGolsModeToggle">
+      <button type="button" class="stat-mode-btn active" data-mode="total">⚽ Artilheiros (total)</button>
+      <button type="button" class="stat-mode-btn" data-mode="media">📊 Melhor média</button>
+    </div>
     <div class="chart-controls">
+      <div class="field">
+        <label for="rankGolsEdition">Edição</label>
+        <select id="rankGolsEdition" class="edition-filter-select"></select>
+      </div>
       <div class="field">
         <label for="rankGolsPosition">Posição</label>
         <select id="rankGolsPosition" class="position-filter-select"></select>
@@ -113,9 +121,17 @@
   </section>
 
   <section class="panel">
-    <h2>Melhor média de assistências por partida</h2>
+    <h2>Assistências — artilheiros e melhor média</h2>
     <div class="hint">Considera apenas jogadores com pelo menos 200 partidas registradas.</div>
+    <div class="stat-mode-toggle" id="rankAssistModeToggle">
+      <button type="button" class="stat-mode-btn active" data-mode="total">🅰️ Mais assistências (total)</button>
+      <button type="button" class="stat-mode-btn" data-mode="media">📊 Melhor média</button>
+    </div>
     <div class="chart-controls">
+      <div class="field">
+        <label for="rankAssistEdition">Edição</label>
+        <select id="rankAssistEdition" class="edition-filter-select"></select>
+      </div>
       <div class="field">
         <label for="rankAssistPosition">Posição</label>
         <select id="rankAssistPosition" class="position-filter-select"></select>
@@ -139,9 +155,17 @@
   </section>
 
   <section class="panel">
-    <h2>Melhor média de G+A por partida</h2>
+    <h2>G+A — artilheiros e melhor média</h2>
     <div class="hint">Considera apenas jogadores com pelo menos 200 partidas registradas.</div>
+    <div class="stat-mode-toggle" id="rankGAModeToggle">
+      <button type="button" class="stat-mode-btn active" data-mode="total">🎯 Mais G+A (total)</button>
+      <button type="button" class="stat-mode-btn" data-mode="media">📊 Melhor média</button>
+    </div>
     <div class="chart-controls">
+      <div class="field">
+        <label for="rankGAEdition">Edição</label>
+        <select id="rankGAEdition" class="edition-filter-select"></select>
+      </div>
       <div class="field">
         <label for="rankGAPosition">Posição</label>
         <select id="rankGAPosition" class="position-filter-select"></select>
@@ -251,8 +275,12 @@
   </section>
 
   <section class="panel">
-    <h2>Melhor média de gols por partida (por carta)</h2>
+    <h2>Gols — artilheiros e melhor média (por carta)</h2>
     <div class="hint">Considera apenas cartas com pelo menos 120 partidas.</div>
+    <div class="stat-mode-toggle" id="rankCardGolsModeToggle">
+      <button type="button" class="stat-mode-btn active" data-mode="total">⚽ Artilheiros (total)</button>
+      <button type="button" class="stat-mode-btn" data-mode="media">📊 Melhor média</button>
+    </div>
     <div class="chart-controls">
       <div class="field">
         <label for="rankCardGolsEdition">Edição</label>
@@ -279,8 +307,12 @@
   </section>
 
   <section class="panel">
-    <h2>Melhor média de assistências por partida (por carta)</h2>
+    <h2>Assistências — artilheiros e melhor média (por carta)</h2>
     <div class="hint">Considera apenas cartas com pelo menos 120 partidas.</div>
+    <div class="stat-mode-toggle" id="rankCardAssistModeToggle">
+      <button type="button" class="stat-mode-btn active" data-mode="total">🅰️ Mais assistências (total)</button>
+      <button type="button" class="stat-mode-btn" data-mode="media">📊 Melhor média</button>
+    </div>
     <div class="chart-controls">
       <div class="field">
         <label for="rankCardAssistEdition">Edição</label>
@@ -307,8 +339,12 @@
   </section>
 
   <section class="panel">
-    <h2>Melhor média de G+A por partida (por carta)</h2>
+    <h2>G+A — artilheiros e melhor média (por carta)</h2>
     <div class="hint">Considera apenas cartas com pelo menos 120 partidas.</div>
+    <div class="stat-mode-toggle" id="rankCardGAModeToggle">
+      <button type="button" class="stat-mode-btn active" data-mode="total">🎯 Mais G+A (total)</button>
+      <button type="button" class="stat-mode-btn" data-mode="media">📊 Melhor média</button>
+    </div>
     <div class="chart-controls">
       <div class="field">
         <label for="rankCardGAEdition">Edição</label>

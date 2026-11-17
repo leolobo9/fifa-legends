@@ -60,7 +60,7 @@
     /* ---------- 2) Rankings: junta os 3 painéis num só com seletor de estatística ---------- */
     var rkTitle = document.createElement('h2');
     rkTitle.className = 'gx-rk-title';
-    rkTitle.textContent = 'Melhor média por partida';
+    rkTitle.textContent = 'Rankings';
     rankGolsPanel.parentNode.insertBefore(rkTitle, rankGolsPanel);
 
     var rkHint = document.createElement('div');
@@ -103,41 +103,49 @@
     });
     showRk('gols');
 
-    function addLeaderboard(panel, tbody){
+    function addLeaderboard(panel, tbody, modeToggle){
       var table = panel.querySelector('.rank-table');
       if(!table || !tbody) return;
       var lb = document.createElement('div');
       lb.className = 'leaderboard';
       table.parentNode.insertBefore(lb, table);
       table.style.display = 'none';
+      function currentMode(){
+        if(!modeToggle) return 'total';
+        var active = modeToggle.querySelector('.stat-mode-btn.active');
+        return active ? active.getAttribute('data-mode') : 'total';
+      }
       function sync(){
         var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
         if(!rows.length || !rows[0].children.length || rows[0].classList.contains('empty-row')){
           lb.innerHTML = '<div class="gx-lb-empty">Sem dados suficientes ainda (mínimo de 200 partidas).</div>';
           return;
         }
-        var medias = rows.map(function(r){ return parseFloat(r.children[4] ? r.children[4].textContent : 0) || 0; });
-        var maxMedia = Math.max.apply(null, medias);
+        /* coluna 3 = total (ex: gols), coluna 4 = média — qual delas vira o número grande
+           e o tamanho da barra depende de qual modo (Total/Média) está ativo no botão */
+        var colIdx = currentMode() === 'media' ? 4 : 3;
+        var values = rows.map(function(r){ return parseFloat(r.children[colIdx] ? r.children[colIdx].textContent : 0) || 0; });
+        var maxValue = Math.max.apply(null, values);
         lb.innerHTML = rows.map(function(r, i){
           var rank = r.children[0].textContent;
           var nome = r.children[1].textContent;
           var partidas = r.children[2].textContent;
-          var media = r.children[4].textContent;
-          var pct = maxMedia > 0 ? Math.max(6, (medias[i] / maxMedia) * 100) : 0;
+          var mainStat = r.children[colIdx].textContent;
+          var pct = maxValue > 0 ? Math.max(6, (values[i] / maxValue) * 100) : 0;
           return '<div class="lb-row">' +
             '<div class="lb-rank">' + rank + '</div>' +
             '<div class="lb-main"><div class="lb-name">' + nome + '</div>' +
               '<div class="lb-bar-track"><div class="lb-bar-fill" style="width:' + pct + '%"></div></div></div>' +
-            '<div class="lb-stats"><div class="lb-media">' + media + '</div><div class="lb-partidas">' + partidas + ' partidas</div></div>' +
+            '<div class="lb-stats"><div class="lb-media">' + mainStat + '</div><div class="lb-partidas">' + partidas + ' partidas</div></div>' +
           '</div>';
         }).join('');
       }
       sync();
       new MutationObserver(sync).observe(tbody, { childList: true });
     }
-    addLeaderboard(rankGolsPanel, rankGolsBody);
-    addLeaderboard(rankAssistPanel, rankAssistBody);
-    addLeaderboard(rankGAPanel, rankGABody);
+    addLeaderboard(rankGolsPanel, rankGolsBody, document.getElementById('rankGolsModeToggle'));
+    addLeaderboard(rankAssistPanel, rankAssistBody, document.getElementById('rankAssistModeToggle'));
+    addLeaderboard(rankGAPanel, rankGABody, document.getElementById('rankGAModeToggle'));
 
     /* ---------- 3) Comparar: busca com ícone + estado vazio explicativo ---------- */
     var compareSearch = document.getElementById('compareSearch');

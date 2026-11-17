@@ -102,6 +102,31 @@
     return true;
   }
 
+  /* ---------- FILTRO DE EDIÇÃO (reutilizável) ---------- */
+  const EDITIONS = [
+    {value:'fifa19', label:'FIFA 19'},
+    {value:'fifa20', label:'FIFA 20'},
+    {value:'fifa21', label:'FIFA 21'},
+    {value:'fifa22', label:'FIFA 22'},
+    {value:'fifa23', label:'FIFA 23'},
+    {value:'fc24', label:'EA FC 24'},
+    {value:'fc25', label:'EA FC 25'},
+    {value:'fc26', label:'EA FC 26'},
+    {value:'fc27', label:'EA FC 27'}
+  ];
+  const EDITION_FILTER_OPTIONS_HTML = `<option value="all">Todas</option>` +
+    EDITIONS.map(ed => `<option value="${ed.value}">${ed.label}</option>`).join('');
+  document.querySelectorAll('#rankGolsEdition, #rankAssistEdition, #rankGAEdition').forEach(sel => {
+    sel.innerHTML = EDITION_FILTER_OPTIONS_HTML;
+  });
+
+  /* Jogador = total agregado de várias cartas (cada uma com sua edição).
+     "Tem carta dessa edição" é o mesmo critério já usado no filtro de edição da página Jogadores. */
+  function matchesEditionFilter(playerCards, filterValue){
+    if(!filterValue || filterValue === 'all') return true;
+    return (playerCards || []).some(c => c.edition === filterValue);
+  }
+
   /* ---------- GRÁFICO 1: TOP N POR ESTATÍSTICA ---------- */
   const chartMetric = document.getElementById('chartMetric');
   const chartPosition = document.getElementById('chartPosition');
@@ -239,7 +264,7 @@
     renderCompareChart();
   });
 
-  /* ---------- RANKINGS DE MÉDIA ---------- */
+  /* ---------- RANKINGS: ARTILHEIROS (TOTAL) E MELHOR MÉDIA ---------- */
   const rankGolsBody = document.getElementById('rankGols');
   const rankAssistBody = document.getElementById('rankAssist');
   const rankGABody = document.getElementById('rankGA');
@@ -249,33 +274,46 @@
   const rankGolsPosition = document.getElementById('rankGolsPosition');
   const rankAssistPosition = document.getElementById('rankAssistPosition');
   const rankGAPosition = document.getElementById('rankGAPosition');
+  const rankGolsEdition = document.getElementById('rankGolsEdition');
+  const rankAssistEdition = document.getElementById('rankAssistEdition');
+  const rankGAEdition = document.getElementById('rankGAEdition');
+
+  const rankMode = { gols:'total', assist:'total', ga:'total' };
+  function setupStatModeToggle(toggleId, key, onChange){
+    const toggle = document.getElementById(toggleId);
+    if(!toggle) return;
+    toggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('.stat-mode-btn');
+      if(!btn) return;
+      rankMode[key] = btn.dataset.mode;
+      toggle.querySelectorAll('.stat-mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+      onChange();
+    });
+  }
+
+  function buildRankRows(statKey, totalFn, editionSel, positionSel, topNSel){
+    let rows = players
+      .filter(p => Number(p.partidas) >= 200 && matchesPositionFilter(p.positions, positionSel.value) && matchesEditionFilter(p.cards, editionSel.value))
+      .map(p => Object.assign({}, p, { total: totalFn(p), media: totalFn(p) / Number(p.partidas) }));
+    rows.sort(rankMode[statKey] === 'media' ? (a,b) => b.media - a.media : (a,b) => b.total - a.total);
+    if(topNSel.value !== 'all') rows = rows.slice(0, Number(topNSel.value));
+    return rows;
+  }
 
   function renderRankings(){
-    let comGols = players
-      .filter(p => Number(p.partidas) >= 200 && matchesPositionFilter(p.positions, rankGolsPosition.value))
-      .map(p => Object.assign({}, p, { media: (Number(p.gols)||0) / Number(p.partidas) }))
-      .sort((a,b) => b.media - a.media);
-    if(rankGolsTopN.value !== 'all') comGols = comGols.slice(0, Number(rankGolsTopN.value));
+    const comGols = buildRankRows('gols', p => Number(p.gols)||0, rankGolsEdition, rankGolsPosition, rankGolsTopN);
     rankGolsBody.innerHTML = comGols.length ? comGols.map((p,i) => `
-      <tr><td>${i+1}</td><td class="rank-nome">${escapeHtml(p.nome)}</td><td>${p.partidas}</td><td>${p.gols}</td><td>${p.media.toFixed(2)}</td></tr>
+      <tr><td>${i+1}</td><td class="rank-nome">${escapeHtml(p.nome)}</td><td>${p.partidas}</td><td>${p.total}</td><td>${p.media.toFixed(2)}</td></tr>
     `).join('') : '<tr><td colspan="5">Sem dados suficientes.</td></tr>';
 
-    let comAssist = players
-      .filter(p => Number(p.partidas) >= 200 && matchesPositionFilter(p.positions, rankAssistPosition.value))
-      .map(p => Object.assign({}, p, { media: (Number(p.assistencias)||0) / Number(p.partidas) }))
-      .sort((a,b) => b.media - a.media);
-    if(rankAssistTopN.value !== 'all') comAssist = comAssist.slice(0, Number(rankAssistTopN.value));
+    const comAssist = buildRankRows('assist', p => Number(p.assistencias)||0, rankAssistEdition, rankAssistPosition, rankAssistTopN);
     rankAssistBody.innerHTML = comAssist.length ? comAssist.map((p,i) => `
-      <tr><td>${i+1}</td><td class="rank-nome">${escapeHtml(p.nome)}</td><td>${p.partidas}</td><td>${p.assistencias}</td><td>${p.media.toFixed(2)}</td></tr>
+      <tr><td>${i+1}</td><td class="rank-nome">${escapeHtml(p.nome)}</td><td>${p.partidas}</td><td>${p.total}</td><td>${p.media.toFixed(2)}</td></tr>
     `).join('') : '<tr><td colspan="5">Sem dados suficientes.</td></tr>';
 
-    let comGA = players
-      .filter(p => Number(p.partidas) >= 200 && matchesPositionFilter(p.positions, rankGAPosition.value))
-      .map(p => Object.assign({}, p, { media: ga(p) / Number(p.partidas) }))
-      .sort((a,b) => b.media - a.media);
-    if(rankGATopN.value !== 'all') comGA = comGA.slice(0, Number(rankGATopN.value));
+    const comGA = buildRankRows('ga', p => ga(p), rankGAEdition, rankGAPosition, rankGATopN);
     rankGABody.innerHTML = comGA.length ? comGA.map((p,i) => `
-      <tr><td>${i+1}</td><td class="rank-nome">${escapeHtml(p.nome)}</td><td>${p.partidas}</td><td>${ga(p)}</td><td>${p.media.toFixed(2)}</td></tr>
+      <tr><td>${i+1}</td><td class="rank-nome">${escapeHtml(p.nome)}</td><td>${p.partidas}</td><td>${p.total}</td><td>${p.media.toFixed(2)}</td></tr>
     `).join('') : '<tr><td colspan="5">Sem dados suficientes.</td></tr>';
   }
   rankGolsTopN.addEventListener('change', renderRankings);
@@ -284,6 +322,12 @@
   rankGolsPosition.addEventListener('change', renderRankings);
   rankAssistPosition.addEventListener('change', renderRankings);
   rankGAPosition.addEventListener('change', renderRankings);
+  rankGolsEdition.addEventListener('change', renderRankings);
+  rankAssistEdition.addEventListener('change', renderRankings);
+  rankGAEdition.addEventListener('change', renderRankings);
+  setupStatModeToggle('rankGolsModeToggle', 'gols', renderRankings);
+  setupStatModeToggle('rankAssistModeToggle', 'assist', renderRankings);
+  setupStatModeToggle('rankGAModeToggle', 'ga', renderRankings);
 
    /* ---------- TIMES IDEAIS (4-3-3) ---------- */
   const FORMATION_433 = [
