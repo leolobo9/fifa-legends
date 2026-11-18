@@ -664,6 +664,53 @@
     resetPageAndRender();
   });
 
+  /* ---------- CELULAR/APP: barra de ordenar (chips) ----------
+     No PC a ordenação é feita clicando no cabeçalho da tabela, mas esse
+     cabeçalho fica escondido no celular (lista em cards). Esses chips
+     substituem o cabeçalho só no celular; no PC nem são criados. */
+  function isMobile(){
+    return window.matchMedia('(max-width:760px)').matches;
+  }
+  const SORT_CHIP_OPTIONS = [
+    {key:'partidas', label:'Partidas'},
+    {key:'gols', label:'Gols'},
+    {key:'assistencias', label:'Assistências'},
+    {key:'ga', label:'G+A'},
+    {key:'nome', label:'Nome'}
+  ];
+  let mobileSortChips = null;
+  if(isMobile()){
+    const filtersPanel = document.querySelector('.filters-panel');
+    if(filtersPanel){
+      const bar = document.createElement('div');
+      bar.className = 'mobile-sort-bar';
+      bar.innerHTML =
+        '<div class="mobile-sort-label">Ordenar por</div>' +
+        '<div class="mobile-sort-chips" id="mobileSortChips">' +
+          SORT_CHIP_OPTIONS.map(o => `<button type="button" class="sort-chip" data-sort-key="${o.key}">${o.label}</button>`).join('') +
+        '</div>';
+      filtersPanel.parentNode.insertBefore(bar, filtersPanel);
+      mobileSortChips = bar.querySelector('#mobileSortChips');
+      mobileSortChips.addEventListener('click', (e) => {
+        const btn = e.target.closest('.sort-chip');
+        if(!btn) return;
+        const key = btn.dataset.sortKey;
+        if(sortKey === key){ sortDir *= -1; }
+        else { sortKey = key; sortDir = -1; }
+        resetPageAndRender();
+      });
+    }
+  }
+  function updateMobileSortChips(){
+    if(!mobileSortChips) return;
+    Array.prototype.forEach.call(mobileSortChips.querySelectorAll('.sort-chip'), (btn) => {
+      const opt = SORT_CHIP_OPTIONS.find(o => o.key === btn.dataset.sortKey);
+      const active = btn.dataset.sortKey === sortKey;
+      btn.classList.toggle('active', active);
+      btn.textContent = active ? `${opt.label} ${sortDir === -1 ? '⬇️' : '⬆️'}` : opt.label;
+    });
+  }
+
   const PLAYER_HEAD_COLUMNS = [
     {key:'nome', label:'Jogador', left:true},
     {key:'partidas', label:'Partidas'},
@@ -695,6 +742,7 @@
       const alignAttr = col.left ? ' style="text-align:left;"' : '';
       return `<th data-key="${col.key}" class="${sortedClass}"${alignAttr}>${col.label} <span class="arrow">▲▼</span></th>`;
     }).join('')}</tr>`;
+    updateMobileSortChips();
   }
 
   const mainViewPlayerBtn = document.getElementById('mainViewPlayerBtn');
