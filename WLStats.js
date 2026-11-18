@@ -511,6 +511,7 @@
       const alignAttr = col.left ? ' style="text-align:left;"' : '';
       return `<th data-key="${col.key}" class="${sortedClass}"${alignAttr}>${col.label} <span class="arrow">▲▼</span></th>`;
     }).join('')}</tr>`;
+    updateStatsMobileSortChips();
   }
   on(statsTableHead, 'click', (e) => {
     const th = e.target.closest('th[data-key]');
@@ -519,6 +520,63 @@
     if(sortKey === key){ sortDir *= -1; } else { sortKey = key; sortDir = -1; }
     renderAll();
   });
+
+  /* ---------- CELULAR/APP: barra de ordenar (chips) ----------
+     No PC a ordenação é feita clicando no cabeçalho da tabela, mas esse
+     cabeçalho fica escondido no celular (lista em cards). Esses chips
+     substituem o cabeçalho só no celular; no PC nem são criados. As
+     opções mudam dependendo do modo (por jogador / por carta), por isso
+     o conteúdo dos chips é reconstruído a cada atualização. */
+  function isMobile(){
+    return window.matchMedia('(max-width:760px)').matches;
+  }
+  function statsSortChipOptions(){
+    return viewMode === 'player'
+      ? [
+          {key:'partidas', label:'Partidas'},
+          {key:'gols', label:'Gols'},
+          {key:'assistencias', label:'Assistências'},
+          {key:'ga', label:'G+A'},
+          {key:'media', label:'Média'},
+          {key:'nome', label:'Nome'}
+        ]
+      : [
+          {key:'partidas', label:'Partidas'},
+          {key:'gols', label:'Gols'},
+          {key:'assistencias', label:'Assistências'},
+          {key:'ga', label:'G+A'},
+          {key:'media', label:'Média'},
+          {key:'edition', label:'Edição'},
+          {key:'nome', label:'Nome'}
+        ];
+  }
+  let statsMobileSortChips = null;
+  if(isMobile()){
+    const tableShell = statsTableHead.closest('.table-shell');
+    if(tableShell){
+      const bar = document.createElement('div');
+      bar.className = 'mobile-sort-bar';
+      bar.innerHTML = '<div class="mobile-sort-label">Ordenar por</div><div class="mobile-sort-chips" id="statsMobileSortChips"></div>';
+      tableShell.parentNode.insertBefore(bar, tableShell);
+      statsMobileSortChips = bar.querySelector('#statsMobileSortChips');
+      statsMobileSortChips.addEventListener('click', (e) => {
+        const btn = e.target.closest('.sort-chip');
+        if(!btn) return;
+        const key = btn.dataset.sortKey;
+        if(sortKey === key){ sortDir *= -1; } else { sortKey = key; sortDir = -1; }
+        renderAll();
+      });
+    }
+  }
+  function updateStatsMobileSortChips(){
+    if(!statsMobileSortChips) return;
+    const opts = statsSortChipOptions();
+    statsMobileSortChips.innerHTML = opts.map(o => {
+      const active = o.key === sortKey;
+      const label = active ? `${o.label} ${sortDir === -1 ? '⬇️' : '⬆️'}` : o.label;
+      return `<button type="button" class="sort-chip${active ? ' active' : ''}" data-sort-key="${o.key}">${label}</button>`;
+    }).join('');
+  }
 
   /* Uma linha de estatísticas por WL, no mesmo estilo de "pílulas"
      (Jogos/Gols/Assist/G+A) usado no resto do site — só que repetido

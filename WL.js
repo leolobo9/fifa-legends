@@ -1285,6 +1285,7 @@
       const alignAttr = col.left ? ' style="text-align:left;"' : '';
       return `<th data-key="${col.key}" class="${sortedClass}"${alignAttr}>${col.label} <span class="arrow">▲▼</span></th>`;
     }).join('')}</tr>`;
+    updateStatsMobileSortChips();
   }
   statsTableHead.addEventListener('click', (e) => {
     const th = e.target.closest('th[data-key]');
@@ -1293,6 +1294,54 @@
     if(statsSortKey === key){ statsSortDir *= -1; } else { statsSortKey = key; statsSortDir = -1; }
     renderStatsTable();
   });
+
+  /* ---------- CELULAR/APP: barra de ordenar (chips) ----------
+     No PC a ordenação é feita clicando no cabeçalho da tabela, mas esse
+     cabeçalho fica escondido no celular (lista em cards). Esses chips
+     substituem o cabeçalho só no celular; no PC nem são criados. */
+  function isMobile(){
+    return window.matchMedia('(max-width:760px)').matches;
+  }
+  const STATS_SORT_CHIP_OPTIONS = [
+    {key:'partidas', label:'Partidas'},
+    {key:'gols', label:'Gols'},
+    {key:'assistencias', label:'Assistências'},
+    {key:'ga', label:'G+A'},
+    {key:'mvps', label:'MVPs'},
+    {key:'media', label:'Média'},
+    {key:'nome', label:'Nome'}
+  ];
+  let statsMobileSortChips = null;
+  if(isMobile()){
+    const tableShell = statsTableHead.closest('.table-shell');
+    if(tableShell){
+      const bar = document.createElement('div');
+      bar.className = 'mobile-sort-bar';
+      bar.innerHTML =
+        '<div class="mobile-sort-label">Ordenar por</div>' +
+        '<div class="mobile-sort-chips" id="statsMobileSortChips">' +
+          STATS_SORT_CHIP_OPTIONS.map(o => `<button type="button" class="sort-chip" data-sort-key="${o.key}">${o.label}</button>`).join('') +
+        '</div>';
+      tableShell.parentNode.insertBefore(bar, tableShell);
+      statsMobileSortChips = bar.querySelector('#statsMobileSortChips');
+      statsMobileSortChips.addEventListener('click', (e) => {
+        const btn = e.target.closest('.sort-chip');
+        if(!btn) return;
+        const key = btn.dataset.sortKey;
+        if(statsSortKey === key){ statsSortDir *= -1; } else { statsSortKey = key; statsSortDir = -1; }
+        renderStatsTable();
+      });
+    }
+  }
+  function updateStatsMobileSortChips(){
+    if(!statsMobileSortChips) return;
+    Array.prototype.forEach.call(statsMobileSortChips.querySelectorAll('.sort-chip'), (btn) => {
+      const opt = STATS_SORT_CHIP_OPTIONS.find(o => o.key === btn.dataset.sortKey);
+      const active = btn.dataset.sortKey === statsSortKey;
+      btn.classList.toggle('active', active);
+      btn.textContent = active ? `${opt.label} ${statsSortDir === -1 ? '⬇️' : '⬆️'}` : opt.label;
+    });
+  }
 
   statsTbody.addEventListener('click', (e) => {
     const nomeCell = e.target.closest('td.nome');
