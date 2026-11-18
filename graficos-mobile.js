@@ -1,30 +1,33 @@
-/* Camada só para a versão mobile/app da tela de Gráficos & Análise (visão "Por jogador").
-   Reorganiza em abas (Gráfico / Comparar / Rankings / Time Ideal), junta os 3 painéis de
+/* Camada só para a versão mobile/app da tela de Gráficos & Análise.
+   Reorganiza em abas (Gráfico / Comparar / Rankings / Time Ideal), junta os painéis de
    "melhor média" num só com um seletor de estatística, e deixa a aba Comparar mais arrumada.
+   Roda igual tanto na visão "Por jogador" quanto na visão "Por carta".
    No PC (telas acima de 760px) esta função nem roda — a tela continua exatamente como era. */
 (function(){
   function isMobile(){
     return window.matchMedia('(max-width: 760px)').matches;
   }
 
-  function run(){
-    if(!isMobile()) return;
-
-    var statsChart = document.getElementById('statsChart');
-    var compareChart = document.getElementById('compareChart');
-    var rankGolsBody = document.getElementById('rankGols');
-    var rankAssistBody = document.getElementById('rankAssist');
-    var rankGABody = document.getElementById('rankGA');
-    var teamMetric = document.getElementById('teamMetric');
-    if(!statsChart || !compareChart || !rankGolsBody || !rankAssistBody || !rankGABody || !teamMetric) return;
+  function setupSection(cfg){
+    var statsChart = document.getElementById(cfg.statsChart);
+    var compareChart = document.getElementById(cfg.compareChart);
+    var teamMetric = document.getElementById(cfg.teamMetric);
+    var ranks = cfg.ranks.map(function(r){
+      return {
+        key: r.key, label: r.label, icon: r.icon,
+        body: document.getElementById(r.body),
+        modeToggle: document.getElementById(r.modeToggle)
+      };
+    });
+    if(!statsChart || !compareChart || !teamMetric) return;
+    if(ranks.some(function(r){ return !r.body; })) return;
 
     var grafico = statsChart.closest('.panel');
     var comparar = compareChart.closest('.panel');
-    var rankGolsPanel = rankGolsBody.closest('.panel');
-    var rankAssistPanel = rankAssistBody.closest('.panel');
-    var rankGAPanel = rankGABody.closest('.panel');
     var timeIdeal = teamMetric.closest('.panel');
-    if(!grafico || !comparar || !rankGolsPanel || !rankAssistPanel || !rankGAPanel || !timeIdeal) return;
+    var rankPanels = ranks.map(function(r){ return r.body.closest('.panel'); });
+    if(!grafico || !comparar || !timeIdeal) return;
+    if(rankPanels.some(function(p){ return !p; })) return;
 
     /* ---------- 1) Abas (Gráfico / Comparar / Rankings / Time Ideal) ---------- */
     var nav = document.createElement('div');
@@ -39,7 +42,7 @@
     var groups = {
       grafico: [grafico],
       comparar: [comparar],
-      rankings: [rankGolsPanel, rankAssistPanel, rankGAPanel],
+      rankings: rankPanels.slice(),
       time: [timeIdeal]
     };
     function showGroup(key){
@@ -57,24 +60,24 @@
     });
     showGroup('grafico');
 
-    /* ---------- 2) Rankings: junta os 3 painéis num só com seletor de estatística ---------- */
+    /* ---------- 2) Rankings: junta os painéis num só com seletor de estatística ---------- */
+    var firstRankPanel = rankPanels[0];
     var rkTitle = document.createElement('h2');
     rkTitle.className = 'gx-rk-title';
     rkTitle.textContent = 'Rankings';
-    rankGolsPanel.parentNode.insertBefore(rkTitle, rankGolsPanel);
+    firstRankPanel.parentNode.insertBefore(rkTitle, firstRankPanel);
 
     var rkHint = document.createElement('div');
     rkHint.className = 'hint';
-    rkHint.textContent = 'Considera apenas jogadores com pelo menos 200 partidas registradas.';
-    rankGolsPanel.parentNode.insertBefore(rkHint, rankGolsPanel);
+    rkHint.textContent = cfg.minPartidasText;
+    firstRankPanel.parentNode.insertBefore(rkHint, firstRankPanel);
 
     var rkWrap = document.createElement('div');
     rkWrap.className = 'gx-rk-switch';
-    rkWrap.innerHTML =
-      '<button type="button" class="gx-rk-btn active" data-rk="gols">⚽ Gols</button>' +
-      '<button type="button" class="gx-rk-btn" data-rk="assist">🅰️ Assistências</button>' +
-      '<button type="button" class="gx-rk-btn" data-rk="ga">🎯 G+A</button>';
-    rankGolsPanel.parentNode.insertBefore(rkWrap, rankGolsPanel);
+    rkWrap.innerHTML = ranks.map(function(r, i){
+      return '<button type="button" class="gx-rk-btn' + (i === 0 ? ' active' : '') + '" data-rk="' + r.key + '">' + r.icon + ' ' + r.label + '</button>';
+    }).join('');
+    firstRankPanel.parentNode.insertBefore(rkWrap, firstRankPanel);
 
     /* título/hint/seletor de estatística pertencem ao grupo "rankings" da aba principal:
        precisam somem junto quando o usuário troca para Gráfico/Comparar/Time Ideal */
@@ -83,15 +86,16 @@
     rkHint.style.display = 'none';
     rkWrap.style.display = 'none';
 
-    [rankGolsPanel, rankAssistPanel, rankGAPanel].forEach(function(p){
+    rankPanels.forEach(function(p){
       var h2 = p.querySelector('h2'); if(h2) h2.style.display = 'none';
       var hint = p.querySelector('.hint'); if(hint) hint.style.display = 'none';
       p.classList.add('gx-rk-panel');
     });
 
-    var rkPanels = { gols: rankGolsPanel, assist: rankAssistPanel, ga: rankGAPanel };
+    var rkPanelsByKey = {};
+    ranks.forEach(function(r, i){ rkPanelsByKey[r.key] = rankPanels[i]; });
     function showRk(key){
-      Object.keys(rkPanels).forEach(function(k){ rkPanels[k].style.display = (k === key) ? '' : 'none'; });
+      Object.keys(rkPanelsByKey).forEach(function(k){ rkPanelsByKey[k].style.display = (k === key) ? '' : 'none'; });
       Array.prototype.forEach.call(rkWrap.querySelectorAll('.gx-rk-btn'), function(b){
         b.classList.toggle('active', b.getAttribute('data-rk') === key);
       });
@@ -101,7 +105,7 @@
       if(!btn) return;
       showRk(btn.getAttribute('data-rk'));
     });
-    showRk('gols');
+    showRk(ranks[0].key);
 
     function addLeaderboard(panel, tbody, modeToggle){
       var table = panel.querySelector('.rank-table');
@@ -118,7 +122,7 @@
       function sync(){
         var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
         if(!rows.length || !rows[0].children.length || rows[0].classList.contains('empty-row')){
-          lb.innerHTML = '<div class="gx-lb-empty">Sem dados suficientes ainda (mínimo de 200 partidas).</div>';
+          lb.innerHTML = '<div class="gx-lb-empty">Sem dados suficientes ainda.</div>';
           return;
         }
         /* coluna 3 = total (ex: gols), coluna 4 = média — qual delas vira o número grande
@@ -143,14 +147,14 @@
       sync();
       new MutationObserver(sync).observe(tbody, { childList: true });
     }
-    addLeaderboard(rankGolsPanel, rankGolsBody, document.getElementById('rankGolsModeToggle'));
-    addLeaderboard(rankAssistPanel, rankAssistBody, document.getElementById('rankAssistModeToggle'));
-    addLeaderboard(rankGAPanel, rankGABody, document.getElementById('rankGAModeToggle'));
+    ranks.forEach(function(r, i){
+      addLeaderboard(rankPanels[i], r.body, r.modeToggle);
+    });
 
     /* ---------- 3) Comparar: busca com ícone + estado vazio explicativo ---------- */
-    var compareSearch = document.getElementById('compareSearch');
-    var compareChips = document.getElementById('compareChips');
-    var compareClearBtn = document.getElementById('compareClearBtn');
+    var compareSearch = document.getElementById(cfg.compareSearch);
+    var compareChips = document.getElementById(cfg.compareChips);
+    var compareClearBtn = document.getElementById(cfg.compareClearBtn);
     var compareChartWrap = compareChart.closest('.chart-wrap');
 
     if(compareSearch && compareSearch.parentNode){
@@ -170,7 +174,7 @@
       emptyState.innerHTML =
         '<div class="gx-empty-ic">⚖️</div>' +
         '<div class="gx-empty-title">Monte sua comparação</div>' +
-        '<div class="gx-empty-sub">Busque um jogador acima e clique em "+ Adicionar". Você pode comparar até 5 de uma vez.</div>';
+        '<div class="gx-empty-sub">' + cfg.compareEmptyHint + '</div>';
       compareChips.parentNode.insertBefore(emptyState, compareChips.nextSibling);
 
       function syncCompareState(){
@@ -182,6 +186,36 @@
       syncCompareState();
       new MutationObserver(syncCompareState).observe(compareChips, { childList: true });
     }
+  }
+
+  function run(){
+    if(!isMobile()) return;
+
+    /* Visão "Por jogador" */
+    setupSection({
+      statsChart: 'statsChart', compareChart: 'compareChart', teamMetric: 'teamMetric',
+      compareSearch: 'compareSearch', compareChips: 'compareChips', compareClearBtn: 'compareClearBtn',
+      minPartidasText: 'Considera apenas jogadores com pelo menos 200 partidas registradas.',
+      compareEmptyHint: 'Busque um jogador acima e clique em "+ Adicionar". Você pode comparar até 5 de uma vez.',
+      ranks: [
+        {key:'gols', label:'Gols', icon:'⚽', body:'rankGols', modeToggle:'rankGolsModeToggle'},
+        {key:'assist', label:'Assistências', icon:'🅰️', body:'rankAssist', modeToggle:'rankAssistModeToggle'},
+        {key:'ga', label:'G+A', icon:'🎯', body:'rankGA', modeToggle:'rankGAModeToggle'}
+      ]
+    });
+
+    /* Visão "Por carta" */
+    setupSection({
+      statsChart: 'cardsChart', compareChart: 'cardsCompareChart', teamMetric: 'cardTeamMetric',
+      compareSearch: 'cardCompareSearch', compareChips: 'cardCompareChips', compareClearBtn: 'cardCompareClearBtn',
+      minPartidasText: 'Considera apenas cartas com pelo menos 120 partidas.',
+      compareEmptyHint: 'Busque um jogador acima e clique em "+ Adicionar". Pode ser do mesmo jogador ou de jogadores diferentes, até 5 cartas.',
+      ranks: [
+        {key:'gols', label:'Gols', icon:'⚽', body:'rankCardGols', modeToggle:'rankCardGolsModeToggle'},
+        {key:'assist', label:'Assistências', icon:'🅰️', body:'rankCardAssist', modeToggle:'rankCardAssistModeToggle'},
+        {key:'ga', label:'G+A', icon:'🎯', body:'rankCardGA', modeToggle:'rankCardGAModeToggle'}
+      ]
+    });
   }
 
   if(document.readyState === 'loading'){

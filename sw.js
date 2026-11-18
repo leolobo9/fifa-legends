@@ -1,7 +1,7 @@
 /* Service worker do Fifa Legends — permite instalar como app e usar offline.
    Suba a versão do CACHE_NAME sempre que quiser forçar os celulares a buscar
    os arquivos atualizados em vez de continuar usando a cópia guardada. */
-const CACHE_NAME = 'fifa-legends-v15';
+const CACHE_NAME = 'fifa-legends-v16';
 
 const ASSETS = [
   'firebase-sync.js',
