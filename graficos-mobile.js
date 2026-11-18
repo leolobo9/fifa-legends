@@ -39,27 +39,6 @@
       '<button type="button" class="gx-subtab-btn" data-gx="time">🧩 Time Ideal</button>';
     grafico.parentNode.insertBefore(nav, grafico);
 
-    var groups = {
-      grafico: [grafico],
-      comparar: [comparar],
-      rankings: rankPanels.slice(),
-      time: [timeIdeal]
-    };
-    function showGroup(key){
-      Object.keys(groups).forEach(function(k){
-        groups[k].forEach(function(el){ el.style.display = (k === key) ? '' : 'none'; });
-      });
-      Array.prototype.forEach.call(nav.querySelectorAll('.gx-subtab-btn'), function(b){
-        b.classList.toggle('active', b.getAttribute('data-gx') === key);
-      });
-    }
-    nav.addEventListener('click', function(e){
-      var btn = e.target.closest('.gx-subtab-btn');
-      if(!btn) return;
-      showGroup(btn.getAttribute('data-gx'));
-    });
-    showGroup('grafico');
-
     /* ---------- 2) Rankings: junta os painéis num só com seletor de estatística ---------- */
     var firstRankPanel = rankPanels[0];
     var rkTitle = document.createElement('h2');
@@ -79,33 +58,49 @@
     }).join('');
     firstRankPanel.parentNode.insertBefore(rkWrap, firstRankPanel);
 
-    /* título/hint/seletor de estatística pertencem ao grupo "rankings" da aba principal:
-       precisam somem junto quando o usuário troca para Gráfico/Comparar/Time Ideal */
-    groups.rankings.push(rkTitle, rkHint, rkWrap);
-    rkTitle.style.display = 'none';
-    rkHint.style.display = 'none';
-    rkWrap.style.display = 'none';
-
     rankPanels.forEach(function(p){
       var h2 = p.querySelector('h2'); if(h2) h2.style.display = 'none';
       var hint = p.querySelector('.hint'); if(hint) hint.style.display = 'none';
       p.classList.add('gx-rk-panel');
     });
 
-    var rkPanelsByKey = {};
-    ranks.forEach(function(r, i){ rkPanelsByKey[r.key] = rankPanels[i]; });
-    function showRk(key){
-      Object.keys(rkPanelsByKey).forEach(function(k){ rkPanelsByKey[k].style.display = (k === key) ? '' : 'none'; });
+    /* ---------- 3) Estado único: qual aba principal + qual estatística dos rankings ----------
+       Antes cada pedaço (abas / seletor de estatística) mexia direto no .style.display dos
+       mesmos painéis de ranking, e uma ação desfazia a outra — por isso Gráfico/Rankings
+       ficavam empilhados ao mesmo tempo. Agora só esta função decide o que fica visível. */
+    var activeTab = 'grafico';
+    var activeRk = ranks[0].key;
+
+    function sync(){
+      grafico.style.display = activeTab === 'grafico' ? '' : 'none';
+      comparar.style.display = activeTab === 'comparar' ? '' : 'none';
+      timeIdeal.style.display = activeTab === 'time' ? '' : 'none';
+      rkTitle.style.display = activeTab === 'rankings' ? '' : 'none';
+      rkHint.style.display = activeTab === 'rankings' ? '' : 'none';
+      rkWrap.style.display = activeTab === 'rankings' ? '' : 'none';
+      ranks.forEach(function(r, i){
+        rankPanels[i].style.display = (activeTab === 'rankings' && r.key === activeRk) ? '' : 'none';
+      });
+      Array.prototype.forEach.call(nav.querySelectorAll('.gx-subtab-btn'), function(b){
+        b.classList.toggle('active', b.getAttribute('data-gx') === activeTab);
+      });
       Array.prototype.forEach.call(rkWrap.querySelectorAll('.gx-rk-btn'), function(b){
-        b.classList.toggle('active', b.getAttribute('data-rk') === key);
+        b.classList.toggle('active', b.getAttribute('data-rk') === activeRk);
       });
     }
+    nav.addEventListener('click', function(e){
+      var btn = e.target.closest('.gx-subtab-btn');
+      if(!btn) return;
+      activeTab = btn.getAttribute('data-gx');
+      sync();
+    });
     rkWrap.addEventListener('click', function(e){
       var btn = e.target.closest('.gx-rk-btn');
       if(!btn) return;
-      showRk(btn.getAttribute('data-rk'));
+      activeRk = btn.getAttribute('data-rk');
+      sync();
     });
-    showRk(ranks[0].key);
+    sync();
 
     function addLeaderboard(panel, tbody, modeToggle){
       var table = panel.querySelector('.rank-table');
@@ -119,7 +114,7 @@
         var active = modeToggle.querySelector('.stat-mode-btn.active');
         return active ? active.getAttribute('data-mode') : 'total';
       }
-      function sync(){
+      function syncLb(){
         var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
         if(!rows.length || !rows[0].children.length || rows[0].classList.contains('empty-row')){
           lb.innerHTML = '<div class="gx-lb-empty">Sem dados suficientes ainda.</div>';
@@ -132,26 +127,29 @@
         var maxValue = Math.max.apply(null, values);
         lb.innerHTML = rows.map(function(r, i){
           var rank = r.children[0].textContent;
-          var nome = r.children[1].textContent;
+          var nameCell = r.children[1];
+          var swatchEl = nameCell.querySelector('.card-swatch');
+          var swatchHtml = swatchEl ? '<span class="lb-swatch" style="background:' + swatchEl.style.background + '"></span>' : '';
+          var nome = nameCell.textContent.trim();
           var partidas = r.children[2].textContent;
           var mainStat = r.children[colIdx].textContent;
           var pct = maxValue > 0 ? Math.max(6, (values[i] / maxValue) * 100) : 0;
           return '<div class="lb-row">' +
             '<div class="lb-rank">' + rank + '</div>' +
-            '<div class="lb-main"><div class="lb-name">' + nome + '</div>' +
+            '<div class="lb-main"><div class="lb-name">' + swatchHtml + nome + '</div>' +
               '<div class="lb-bar-track"><div class="lb-bar-fill" style="width:' + pct + '%"></div></div></div>' +
             '<div class="lb-stats"><div class="lb-media">' + mainStat + '</div><div class="lb-partidas">' + partidas + ' partidas</div></div>' +
           '</div>';
         }).join('');
       }
-      sync();
-      new MutationObserver(sync).observe(tbody, { childList: true });
+      syncLb();
+      new MutationObserver(syncLb).observe(tbody, { childList: true });
     }
     ranks.forEach(function(r, i){
       addLeaderboard(rankPanels[i], r.body, r.modeToggle);
     });
 
-    /* ---------- 3) Comparar: busca com ícone + estado vazio explicativo ---------- */
+    /* ---------- 4) Comparar: busca com ícone + estado vazio explicativo ---------- */
     var compareSearch = document.getElementById(cfg.compareSearch);
     var compareChips = document.getElementById(cfg.compareChips);
     var compareClearBtn = document.getElementById(cfg.compareClearBtn);

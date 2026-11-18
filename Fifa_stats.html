@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Fifa Legends — Gráficos & Análise</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="Fifa.css">
@@ -190,8 +190,12 @@
 
     <section class="panel">
     <h2>Times ideais (4-3-3)</h2>
-    <div class="hint">Escolha o critério. Os 3 times são montados automaticamente, sem repetir jogadores entre eles.</div>
+    <div class="hint">Escolha a edição e o critério. Os 3 times são montados automaticamente, sem repetir jogadores entre eles.</div>
     <div class="chart-controls">
+      <div class="field">
+        <label for="teamEdition">Edição</label>
+        <select id="teamEdition" class="edition-filter-select"></select>
+      </div>
       <div class="field">
         <label for="teamMetric">Critério</label>
         <select id="teamMetric">

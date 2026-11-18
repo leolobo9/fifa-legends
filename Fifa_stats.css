@@ -353,7 +353,11 @@
 .lb-main{ min-width:0; }
 .lb-name{
   font-size:13.5px; color:var(--ink); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  margin-bottom:5px;
+  margin-bottom:5px; display:flex; align-items:center; gap:6px;
+}
+.lb-swatch{
+  width:14px; height:14px; border-radius:4px; flex-shrink:0; display:inline-block;
+  border:1px solid rgba(0,0,0,0.15);
 }
 .lb-row:nth-child(1) .lb-name{ color:var(--primary-ink); }
 .lb-bar-track{ height:6px; border-radius:999px; background:var(--line); overflow:hidden; }

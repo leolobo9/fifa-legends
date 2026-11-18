@@ -116,7 +116,7 @@
   ];
   const EDITION_FILTER_OPTIONS_HTML = `<option value="all">Todas</option>` +
     EDITIONS.map(ed => `<option value="${ed.value}">${ed.label}</option>`).join('');
-  document.querySelectorAll('#rankGolsEdition, #rankAssistEdition, #rankGAEdition').forEach(sel => {
+  document.querySelectorAll('#rankGolsEdition, #rankAssistEdition, #rankGAEdition, #teamEdition').forEach(sel => {
     sel.innerHTML = EDITION_FILTER_OPTIONS_HTML;
   });
 
@@ -345,6 +345,7 @@
   ];
 
   const teamMetric = document.getElementById('teamMetric');
+  const teamEdition = document.getElementById('teamEdition');
   let teamsState = { team1: [], team2: [], team3: [] };
   let selectedChip = null;
 
@@ -352,24 +353,70 @@
   tooltipEl.className = 'team-tooltip';
   document.body.appendChild(tooltipEl);
 
+  function placeTooltip(el, x, y){
+    el.style.left = '0px';
+    el.style.top = '0px';
+    el.style.display = 'block';
+    var w = el.offsetWidth;
+    var h = el.offsetHeight;
+    var left = x + 16;
+    var top = y + 16;
+    if(left + w > window.innerWidth - 8) left = x - w - 16;
+    if(left < 8) left = 8;
+    if(top + h > window.innerHeight - 8) top = y - h - 16;
+    if(top < 8) top = 8;
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
+  }
   function showTooltip(html, x, y){
     tooltipEl.innerHTML = html;
-    tooltipEl.style.display = 'block';
-    tooltipEl.style.left = (x + 16) + 'px';
-    tooltipEl.style.top = (y + 16) + 'px';
+    placeTooltip(tooltipEl, x, y);
   }
   function hideTooltip(){ tooltipEl.style.display = 'none'; }
 
-  function metricValueForTeam(p, metric){
-    if(metric === 'ga') return ga(p);
-    return Number(p[metric]) || 0;
+  /* Cartas do jogador que valem para a edição escolhida ("Todas" = todas as cartas dele). */
+  function cardsForEdition(p, edition){
+    const cards = p.cards || [];
+    if(!edition || edition === 'all') return cards;
+    return cards.filter(c => c.edition === edition);
   }
 
-  function buildOneTeam(metric, usedSet){
+  function metricValueForTeam(p, metric, edition){
+    if(!edition || edition === 'all'){
+      if(metric === 'ga') return ga(p);
+      return Number(p[metric]) || 0;
+    }
+    const cards = cardsForEdition(p, edition);
+    const sum = key => cards.reduce((s,c) => s + (Number(c[key]) || 0), 0);
+    if(metric === 'ga') return sum('gols') + sum('assistencias');
+    return sum(metric);
+  }
+
+  /* Posição "principal" do jogador: a mais usada entre as cartas dele (ponderada pelas
+     partidas de cada carta), em vez da união de todas as posições que ele já teve em
+     qualquer carta — isso evitava, por exemplo, um atacante entrar no Time Ideal como
+     lateral só porque teve uma carta avulsa marcada naquela posição. Quando uma edição
+     específica está escolhida, só as cartas dessa edição contam. */
+  function primaryPosition(p, edition){
+    const weight = {};
+    cardsForEdition(p, edition).forEach(c => {
+      (c.positions || []).forEach(code => {
+        weight[code] = (weight[code] || 0) + (Number(c.partidas) || 1);
+      });
+    });
+    let best = null, bestW = -1;
+    Object.keys(weight).forEach(code => {
+      if(weight[code] > bestW){ bestW = weight[code]; best = code; }
+    });
+    return best;
+  }
+
+  function buildOneTeam(metric, edition, usedSet){
     return FORMATION_433.map(slot => {
       const candidates = players
-        .filter(p => Array.isArray(p.positions) && p.positions.includes(slot.code) && !usedSet.has(p.id))
-        .sort((a,b) => metricValueForTeam(b, metric) - metricValueForTeam(a, metric));
+        .filter(p => (!edition || edition === 'all' || cardsForEdition(p, edition).length > 0)
+          && primaryPosition(p, edition) === slot.code && !usedSet.has(p.id))
+        .sort((a,b) => metricValueForTeam(b, metric, edition) - metricValueForTeam(a, metric, edition));
       const chosen = candidates[0] || null;
       if(chosen) usedSet.add(chosen.id);
       return { slot, player: chosen };
@@ -381,6 +428,7 @@
     if(!container) return;
     const team = teamsState[teamKey];
     const metric = teamMetric.value;
+    const edition = teamEdition.value;
 
     container.innerHTML = team.map(({slot, player}, idx) => {
       const isSelected = selectedChip && selectedChip.teamKey === teamKey && selectedChip.index === idx;
@@ -388,7 +436,7 @@
       if(!player){
         return `<div class="player-chip empty${selClass}" data-team="${teamKey}" data-index="${idx}" style="top:${slot.top}%; left:${slot.left}%;">${slot.code}<span class="chip-stat">vago</span></div>`;
       }
-      const statValue = metric === 'ga' ? ga(player) : (Number(player[metric])||0);
+      const statValue = metricValueForTeam(player, metric, edition);
       return `<div class="player-chip${selClass}" data-team="${teamKey}" data-index="${idx}" style="top:${slot.top}%; left:${slot.left}%;">${escapeHtml(player.nome)}<span class="chip-stat">${slot.code} · ${statValue}</span></div>`;
     }).join('');
   }
@@ -401,10 +449,11 @@
 
   function renderIdealTeams(){
     const metric = teamMetric.value;
+    const edition = teamEdition.value;
     const usedSet = new Set();
-    teamsState.team1 = buildOneTeam(metric, usedSet);
-    teamsState.team2 = buildOneTeam(metric, usedSet);
-    teamsState.team3 = buildOneTeam(metric, usedSet);
+    teamsState.team1 = buildOneTeam(metric, edition, usedSet);
+    teamsState.team2 = buildOneTeam(metric, edition, usedSet);
+    teamsState.team3 = buildOneTeam(metric, edition, usedSet);
     selectedChip = null;
     renderAllPitches();
   }
@@ -449,24 +498,28 @@
       const entry = teamsState[chip.dataset.team][idx];
       if(!entry || !entry.player) return;
       const p = entry.player;
+      const edition = teamEdition.value;
+      const partidas = metricValueForTeam(p, 'partidas', edition);
+      const gols = metricValueForTeam(p, 'gols', edition);
+      const assist = metricValueForTeam(p, 'assistencias', edition);
       const html = `<strong>${escapeHtml(p.nome)}</strong>
         <div class="tt-row"><span>Posição</span><span>${entry.slot.code}</span></div>
-        <div class="tt-row"><span>Partidas</span><span>${p.partidas}</span></div>
-        <div class="tt-row"><span>Gols</span><span>${p.gols}</span></div>
-        <div class="tt-row"><span>Assistências</span><span>${p.assistencias}</span></div>
-        <div class="tt-row"><span>G+A</span><span>${ga(p)}</span></div>`;
+        <div class="tt-row"><span>Partidas</span><span>${partidas}</span></div>
+        <div class="tt-row"><span>Gols</span><span>${gols}</span></div>
+        <div class="tt-row"><span>Assistências</span><span>${assist}</span></div>
+        <div class="tt-row"><span>G+A</span><span>${gols + assist}</span></div>`;
       showTooltip(html, e.clientX, e.clientY);
     });
     el.addEventListener('mousemove', (e) => {
       const chip = e.target.closest('.player-chip');
       if(!chip) return;
-      tooltipEl.style.left = (e.clientX + 16) + 'px';
-      tooltipEl.style.top = (e.clientY + 16) + 'px';
+      placeTooltip(tooltipEl, e.clientX, e.clientY);
     });
     el.addEventListener('mouseout', hideTooltip);
   });
 
   teamMetric.addEventListener('change', renderIdealTeams);
+  teamEdition.addEventListener('change', renderIdealTeams);
   /* ---------- INIT ---------- */
   loadPlayers();
   renderChart();

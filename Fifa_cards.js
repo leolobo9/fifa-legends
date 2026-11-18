@@ -559,11 +559,24 @@
   cardTooltipEl.className = 'team-tooltip';
   document.body.appendChild(cardTooltipEl);
 
+  function placeCardTooltip(el, x, y){
+    el.style.left = '0px';
+    el.style.top = '0px';
+    el.style.display = 'block';
+    var w = el.offsetWidth;
+    var h = el.offsetHeight;
+    var left = x + 16;
+    var top = y + 16;
+    if(left + w > window.innerWidth - 8) left = x - w - 16;
+    if(left < 8) left = 8;
+    if(top + h > window.innerHeight - 8) top = y - h - 16;
+    if(top < 8) top = 8;
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
+  }
   function showCardTooltip(html, x, y){
     cardTooltipEl.innerHTML = html;
-    cardTooltipEl.style.display = 'block';
-    cardTooltipEl.style.left = (x + 16) + 'px';
-    cardTooltipEl.style.top = (y + 16) + 'px';
+    placeCardTooltip(cardTooltipEl, x, y);
   }
   function hideCardTooltip(){ cardTooltipEl.style.display = 'none'; }
 
@@ -669,8 +682,7 @@
     el.addEventListener('mousemove', (e) => {
       const chip = e.target.closest('.player-chip');
       if(!chip) return;
-      cardTooltipEl.style.left = (e.clientX + 16) + 'px';
-      cardTooltipEl.style.top = (e.clientY + 16) + 'px';
+      placeCardTooltip(cardTooltipEl, e.clientX, e.clientY);
     });
     el.addEventListener('mouseout', hideCardTooltip);
   });
