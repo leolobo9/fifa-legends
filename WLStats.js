@@ -690,8 +690,8 @@
         const isOpen = expandedRowIds.has(row.id);
         const mainRow = `<tr>
           <td class="nome" data-id="${row.id}">${escapeHtml(row.nome)}</td>
-          <td>${row.partidas}</td><td>${row.gols}</td><td>${row.assistencias}</td>
-          <td class="ga">${row.ga}</td><td>${row.mvps}</td><td>${row.media.toFixed(1)}</td>
+          <td data-label="Partidas">${row.partidas}</td><td data-label="Gols">${row.gols}</td><td data-label="Assistências">${row.assistencias}</td>
+          <td class="ga" data-label="G+A">${row.ga}</td><td data-label="MVPs">${row.mvps}</td><td data-label="Média Nota">${row.media.toFixed(1)}</td>
           <td><button class="detail-btn-wl ${isOpen?'active':''}" data-id="${row.id}">${isOpen?'Fechar ▲':'Ver detalhes ▾'}</button></td>
         </tr>`;
         const expandRow = isOpen ? `<tr class="expand-row-wl"><td colspan="${colspan}">${buildPlayerExpandBox(row.id)}</td></tr>` : '';
@@ -716,10 +716,10 @@
         const swatch = getCardSwatch(row.event, row.edition);
         const mainRow = `<tr>
           <td class="nome"><span class="card-swatch" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:8px;background:${swatch};"></span>${escapeHtml(row.nome)}</td>
-          <td>${EDITION_LABEL_WL[row.edition]||row.edition||'—'}</td>
-          <td>${escapeHtml(row.event||'—')}</td>
-          <td>${row.partidas}</td><td>${row.gols}</td><td>${row.assistencias}</td>
-          <td class="ga">${row.ga}</td><td>${row.media.toFixed(1)}</td>
+          <td data-label="Edição">${EDITION_LABEL_WL[row.edition]||row.edition||'—'}</td>
+          <td data-label="Evento">${escapeHtml(row.event||'—')}</td>
+          <td data-label="Partidas">${row.partidas}</td><td data-label="Gols">${row.gols}</td><td data-label="Assistências">${row.assistencias}</td>
+          <td class="ga" data-label="G+A">${row.ga}</td><td data-label="Média Nota">${row.media.toFixed(1)}</td>
           <td><button class="detail-btn-wl ${isOpen?'active':''}" data-id="${row.id}">${isOpen?'Fechar ▲':'Ver detalhes ▾'}</button></td>
         </tr>`;
         const expandRow = isOpen ? `<tr class="expand-row-wl"><td colspan="${colspan}">${buildCardExpandBox(row, row._nameKey)}</td></tr>` : '';
@@ -937,27 +937,27 @@
   /* ---------- RANKINGS (por carta) ---------- */
   const RANK_MIN_MATCHES = STATS_MIN_MATCHES;
 
-  function renderRankRow(c, i, statValue, media){
+  function renderRankRow(c, i, statValue, media, statLabel){
     const ed = c.edition ? (EDITION_LABEL_WL[c.edition] || c.edition) : 'Não informado';
     const ev = c.event ? escapeHtml(c.event) : 'Não informado';
     const swatch = getCardSwatch(c.event, c.edition);
-    const mediaCell = media === null ? '' : `<td>${media.toFixed(2)}</td>`;
+    const mediaCell = media === null ? '' : `<td data-label="Média">${media.toFixed(2)}</td>`;
     return `<tr>
-      <td>${i+1}</td>
+      <td data-label="Nº">${i+1}</td>
       <td class="rank-nome"><span class="card-swatch" style="width:16px; height:16px; display:inline-block; vertical-align:middle; margin-right:6px; background:${swatch};"></span>${escapeHtml(c.nome)} <span style="color:var(--muted); font-size:11px;">(${ed} · ${ev})</span></td>
-      <td>${c.partidas}</td>
-      <td>${statValue}</td>
+      <td data-label="Partidas">${c.partidas}</td>
+      <td data-label="${statLabel||'Valor'}">${statValue}</td>
       ${mediaCell}
     </tr>`;
   }
 
-  function renderRankRowPlayer(p, i, statValue, media){
-    const mediaCell = media === null ? '' : `<td>${media.toFixed(2)}</td>`;
+  function renderRankRowPlayer(p, i, statValue, media, statLabel){
+    const mediaCell = media === null ? '' : `<td data-label="Média">${media.toFixed(2)}</td>`;
     return `<tr>
-      <td>${i+1}</td>
+      <td data-label="Nº">${i+1}</td>
       <td class="rank-nome">${escapeHtml(p.nome)}</td>
-      <td>${p.partidas}</td>
-      <td>${statValue}</td>
+      <td data-label="Partidas">${p.partidas}</td>
+      <td data-label="${statLabel||'Valor'}">${statValue}</td>
       ${mediaCell}
     </tr>`;
   }
@@ -984,26 +984,26 @@
       if(!select || select.value === 'all') return list;
       return list.slice(0, Number(select.value));
     }
-    function renderRow(x, i, statValue, media){
-      return isPlayerMode ? renderRankRowPlayer(x.c, i, statValue, media) : renderRankRow(x.c, i, statValue, media);
+    function renderRow(x, i, statValue, media, statLabel){
+      return isPlayerMode ? renderRankRowPlayer(x.c, i, statValue, media, statLabel) : renderRankRow(x.c, i, statValue, media, statLabel);
     }
-    function paint(tbody, list, getStatValue, getMedia, emptyColspan){
+    function paint(tbody, list, getStatValue, getMedia, emptyColspan, statLabel){
       tbody.innerHTML = list.length
-        ? list.map((x,i) => renderRow(x, i, getStatValue(x), getMedia ? getMedia(x) : null)).join('')
+        ? list.map((x,i) => renderRow(x, i, getStatValue(x), getMedia ? getMedia(x) : null, statLabel)).join('')
         : `<tr><td colspan="${emptyColspan}">Sem dados suficientes (mínimo de 5 partidas).</td></tr>`;
     }
 
     if(rankGolsBody){
       let byGols = applyTopN(buildList(c => c.gols), rankGolsTopN);
-      paint(rankGolsBody, byGols, x => x.c.gols, x => x.c.gols / x.c.partidas, 5);
+      paint(rankGolsBody, byGols, x => x.c.gols, x => x.c.gols / x.c.partidas, 5, 'Gols');
     }
     if(rankAssistBody){
       let byAssist = applyTopN(buildList(c => c.assistencias), rankAssistTopN);
-      paint(rankAssistBody, byAssist, x => x.c.assistencias, x => x.c.assistencias / x.c.partidas, 5);
+      paint(rankAssistBody, byAssist, x => x.c.assistencias, x => x.c.assistencias / x.c.partidas, 5, 'Assistências');
     }
     if(rankGABody){
       let byGA = applyTopN(buildList(c => c.gols + c.assistencias), rankGATopN);
-      paint(rankGABody, byGA, x => x.c.gols + x.c.assistencias, x => (x.c.gols + x.c.assistencias) / x.c.partidas, 5);
+      paint(rankGABody, byGA, x => x.c.gols + x.c.assistencias, x => (x.c.gols + x.c.assistencias) / x.c.partidas, 5, 'G+A');
     }
     if(rankMediaBody){
       let byMedia = applyTopN(buildList(c => c.notaSoma / c.partidas), rankMediaTopN);
@@ -1013,20 +1013,20 @@
             const media = (c.notaSoma/c.partidas).toFixed(2);
             if(isPlayerMode){
               return `<tr>
-                <td>${i+1}</td>
+                <td data-label="Nº">${i+1}</td>
                 <td class="rank-nome">${escapeHtml(c.nome)}</td>
-                <td>${c.partidas}</td>
-                <td>${media}</td>
+                <td data-label="Partidas">${c.partidas}</td>
+                <td data-label="Média Nota">${media}</td>
               </tr>`;
             }
             const ed = c.edition ? (EDITION_LABEL_WL[c.edition] || c.edition) : 'Não informado';
             const ev = c.event ? escapeHtml(c.event) : 'Não informado';
             const swatch = getCardSwatch(c.event, c.edition);
             return `<tr>
-              <td>${i+1}</td>
+              <td data-label="Nº">${i+1}</td>
               <td class="rank-nome"><span class="card-swatch" style="width:16px; height:16px; display:inline-block; vertical-align:middle; margin-right:6px; background:${swatch};"></span>${escapeHtml(c.nome)} <span style="color:var(--muted); font-size:11px;">(${ed} · ${ev})</span></td>
-              <td>${c.partidas}</td>
-              <td>${media}</td>
+              <td data-label="Partidas">${c.partidas}</td>
+              <td data-label="Média Nota">${media}</td>
             </tr>`;
           }).join('')
         : '<tr><td colspan="4">Sem dados suficientes (mínimo de 5 partidas).</td></tr>';
@@ -1041,7 +1041,7 @@
       }).filter(x => x.mvps > 0).sort((a,b) => b.mvps - a.mvps);
       const byMVP = applyTopN(itemsWithMvp, rankMVPTopN);
       rankMVPBody.innerHTML = byMVP.length
-        ? byMVP.map((x,i) => renderRow(x, i, x.mvps, x.mvps / x.c.partidas)).join('')
+        ? byMVP.map((x,i) => renderRow(x, i, x.mvps, x.mvps / x.c.partidas, 'MVPs')).join('')
         : '<tr><td colspan="5">Nenhum MVP registrado ainda com esses filtros.</td></tr>';
     }
   }

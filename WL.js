@@ -1111,15 +1111,15 @@
 
       if(isEditing){
         return `<tr class="editing-row-wl">
-          <td>${m.number}</td>
-          <td><span class="result-badge result-${m.resultado.toLowerCase()}">${resultLabel[m.resultado]}</span></td>
-          <td>
+          <td data-label="Partida">${m.number}</td>
+          <td data-label="Resultado"><span class="result-badge result-${m.resultado.toLowerCase()}">${resultLabel[m.resultado]}</span></td>
+          <td data-label="Placar">
             <input type="number" min="0" class="edit-placar-input edit-gf" data-id="${m.id}" value="${m.golsFeitos}" style="width:48px;">
             <span style="margin:0 4px;">-</span>
             <input type="number" min="0" class="edit-placar-input edit-gs" data-id="${m.id}" value="${m.golsSofridos}" style="width:48px;">
           </td>
-          <td>${mediaNota}</td>
-          <td>${mvp ? `<span class="mvp-badge">⭐ ${escapeHtml(mvp.nome)} (${mvp.nota.toFixed(1)})</span>` : '—'}</td>
+          <td data-label="Média">${mediaNota}</td>
+          <td data-label="MVP">${mvp ? `<span class="mvp-badge">⭐ ${escapeHtml(mvp.nome)} (${mvp.nota.toFixed(1)})</span>` : '—'}</td>
           <td colspan="3" style="text-align:right; white-space:nowrap;">
             <button class="save-match-btn add-btn-wl" data-id="${m.id}" style="padding:6px 12px; font-size:12px;">💾 Salvar</button>
             <button class="cancel-match-btn cancel-btn-wl" data-id="${m.id}" style="padding:6px 12px; font-size:12px;">Cancelar</button>
@@ -1128,11 +1128,11 @@
       }
 
       const mainRow = `<tr>
-        <td>${m.number}</td>
-        <td><span class="result-badge result-${m.resultado.toLowerCase()}">${resultLabel[m.resultado]}</span></td>
-        <td>${m.golsFeitos} - ${m.golsSofridos}</td>
-        <td>${mediaNota}</td>
-        <td>${mvp ? `<span class="mvp-badge">⭐ ${escapeHtml(mvp.nome)} (${mvp.nota.toFixed(1)})</span>` : '—'}</td>
+        <td data-label="Partida">${m.number}</td>
+        <td data-label="Resultado"><span class="result-badge result-${m.resultado.toLowerCase()}">${resultLabel[m.resultado]}</span></td>
+        <td data-label="Placar">${m.golsFeitos} - ${m.golsSofridos}</td>
+        <td data-label="Média">${mediaNota}</td>
+        <td data-label="MVP">${mvp ? `<span class="mvp-badge">⭐ ${escapeHtml(mvp.nome)} (${mvp.nota.toFixed(1)})</span>` : '—'}</td>
         <td><button class="detail-btn-wl ${isOpen ? 'active' : ''}" data-id="${m.id}">${isOpen ? 'Fechar ▲' : 'Detalhes ▾'}</button></td>
         <td><button class="edit-match-btn" data-id="${m.id}" title="Editar placar">✏️</button></td>
         <td><button class="del-match-btn" data-id="${m.id}" title="Remover">&times;</button></td>
@@ -1381,8 +1381,8 @@
       const isOpen = expandedStatsIds.has(row.id);
       const mainRow = `<tr>
         <td class="nome" data-id="${row.id}">${escapeHtml(row.nome)}</td>
-        <td>${row.partidas}</td><td>${row.gols}</td><td>${row.assistencias}</td>
-        <td class="ga">${row.ga}</td><td>${row.mvps}</td><td>${row.media.toFixed(1)}</td>
+        <td data-label="Partidas">${row.partidas}</td><td data-label="Gols">${row.gols}</td><td data-label="Assistências">${row.assistencias}</td>
+        <td class="ga" data-label="G+A">${row.ga}</td><td data-label="MVPs">${row.mvps}</td><td data-label="Média Nota">${row.media.toFixed(1)}</td>
         <td><button class="detail-btn-wl ${isOpen?'active':''}" data-id="${row.id}">${isOpen?'Fechar ▲':'Ver detalhes ▾'}</button></td>
       </tr>`;
       const expandRow = isOpen ? `<tr class="expand-row-wl"><td colspan="${STATS_COLUMNS.length}">${buildPlayerExpandBoxWL(row.id, agg, wl)}</td></tr>` : '';
