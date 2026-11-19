@@ -1127,7 +1127,7 @@
         </tr>`;
       }
 
-      const mainRow = `<tr>
+      const mainRow = `<tr class="row-match">
         <td data-label="Partida">${m.number}</td>
         <td data-label="Resultado"><span class="result-badge result-${m.resultado.toLowerCase()}">${resultLabel[m.resultado]}</span></td>
         <td data-label="Placar">${m.golsFeitos} - ${m.golsSofridos}</td>
@@ -1379,7 +1379,7 @@
 
     statsTbody.innerHTML = fullList.map(row => {
       const isOpen = expandedStatsIds.has(row.id);
-      const mainRow = `<tr>
+      const mainRow = `<tr class="row-wlstat">
         <td class="nome" data-id="${row.id}">${escapeHtml(row.nome)}</td>
         <td data-label="Partidas">${row.partidas}</td><td data-label="Gols">${row.gols}</td><td data-label="Assistências">${row.assistencias}</td>
         <td class="ga" data-label="G+A">${row.ga}</td><td data-label="MVPs">${row.mvps}</td><td data-label="Média Nota">${row.media.toFixed(1)}</td>

@@ -688,7 +688,7 @@
       });
       renderRow = (row) => {
         const isOpen = expandedRowIds.has(row.id);
-        const mainRow = `<tr>
+        const mainRow = `<tr class="row-wlstat">
           <td class="nome" data-id="${row.id}">${escapeHtml(row.nome)}</td>
           <td data-label="Partidas">${row.partidas}</td><td data-label="Gols">${row.gols}</td><td data-label="Assistências">${row.assistencias}</td>
           <td class="ga" data-label="G+A">${row.ga}</td><td data-label="MVPs">${row.mvps}</td><td data-label="Média Nota">${row.media.toFixed(1)}</td>
@@ -714,7 +714,7 @@
       renderRow = (row) => {
         const isOpen = expandedRowIds.has(row.id);
         const swatch = getCardSwatch(row.event, row.edition);
-        const mainRow = `<tr>
+        const mainRow = `<tr class="row-wlcard">
           <td class="nome"><span class="card-swatch" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:8px;background:${swatch};"></span>${escapeHtml(row.nome)}</td>
           <td data-label="Edição">${EDITION_LABEL_WL[row.edition]||row.edition||'—'}</td>
           <td data-label="Evento">${escapeHtml(row.event||'—')}</td>
@@ -990,7 +990,7 @@
     function paint(tbody, list, getStatValue, getMedia, emptyColspan, statLabel){
       tbody.innerHTML = list.length
         ? list.map((x,i) => renderRow(x, i, getStatValue(x), getMedia ? getMedia(x) : null, statLabel)).join('')
-        : `<tr><td colspan="${emptyColspan}">Sem dados suficientes (mínimo de 5 partidas).</td></tr>`;
+        : `<tr class="empty-row"><td colspan="${emptyColspan}">Sem dados suficientes (mínimo de 5 partidas).</td></tr>`;
     }
 
     if(rankGolsBody){
@@ -1029,7 +1029,7 @@
               <td data-label="Média Nota">${media}</td>
             </tr>`;
           }).join('')
-        : '<tr><td colspan="4">Sem dados suficientes (mínimo de 5 partidas).</td></tr>';
+        : '<tr class="empty-row"><td colspan="4">Sem dados suficientes (mínimo de 5 partidas).</td></tr>';
     }
     if(rankMVPBody){
       const itemsWithMvp = items.map(c => {
@@ -1042,7 +1042,7 @@
       const byMVP = applyTopN(itemsWithMvp, rankMVPTopN);
       rankMVPBody.innerHTML = byMVP.length
         ? byMVP.map((x,i) => renderRow(x, i, x.mvps, x.mvps / x.c.partidas, 'MVPs')).join('')
-        : '<tr><td colspan="5">Nenhum MVP registrado ainda com esses filtros.</td></tr>';
+        : '<tr class="empty-row"><td colspan="5">Nenhum MVP registrado ainda com esses filtros.</td></tr>';
     }
   }
 
